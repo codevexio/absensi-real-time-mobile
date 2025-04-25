@@ -1,119 +1,106 @@
 package com.example.absen.ui
 
-import android.Manifest
-import android.app.Activity
-import android.content.Context
-import android.content.pm.PackageManager
-import android.location.Location
-import android.net.Uri
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.widget.*
-import androidx.activity.result.ActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.app.ActivityCompat
-import androidx.core.content.FileProvider
-import androidx.core.net.toUri
+import android.widget.Button
+import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
 import com.example.absen.R
 import com.example.absen.api.ApiClient
 import com.example.absen.api.ApiService
-import com.github.dhaval2404.imagepicker.ImagePicker
-import com.google.android.gms.location.LocationServices
-import kotlinx.coroutines.launch
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
-import okhttp3.RequestBody
-import okhttp3.RequestBody.Companion.asRequestBody
-import java.io.File
+import com.example.absen.model.CekWaktuPresensiResponse
+import com.example.absen.ui.fragment.PresensiMasukFragment
+import com.example.absen.ui.fragment.PresensiPulangFragment
+import com.example.absen.util.SessionManager
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
-class PresensiFragment : Fragment() {
+class PresensiFragment : Fragment(R.layout.fragment_presensi) {
 
-    private lateinit var btnPresensi: Button
-    private lateinit var imagePreview: ImageView
-    private var imageFile: File? = null
-    private var currentLat = 0.0
-    private var currentLng = 0.0
-    private val api: ApiService by lazy { ApiClient.apiService }
-
-    private val cameraLauncher = registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
-        if (success && imageFile != null) {
-            imagePreview.setImageURI(imageFile!!.toUri())
-            sendPresensiToAPI(imageFile!!)
-        }
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_presensi, container, false)
-    }
+    private lateinit var btnPresensiMasuk: Button
+    private lateinit var btnPresensiPulang: Button
+    private lateinit var tvMessage: TextView
+    private lateinit var sessionManager: SessionManager
+    private lateinit var apiService: ApiService
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        btnPresensi = view.findViewById(R.id.btnPresensi)
-        imagePreview = view.findViewById(R.id.imagePreview)
+        super.onViewCreated(view, savedInstanceState)
 
-        btnPresensi.setOnClickListener {
-            ambilLokasi()
+        // Inisialisasi UI
+        btnPresensiMasuk = view.findViewById(R.id.btn_presensi_masuk)
+        btnPresensiPulang = view.findViewById(R.id.btn_presensi_pulang)
+        tvMessage = view.findViewById(R.id.tv_message)
+
+        // Inisialisasi SessionManager
+        sessionManager = SessionManager(requireContext())
+
+        // Ambil token dari SessionManager
+        val token = sessionManager.getToken()
+
+        if (token != null) {
+            // Inisialisasi API dengan token
+            apiService = ApiClient.getApiServiceWithToken(token)
+            cekWaktuPresensi()
+        } else {
+            tvMessage.text = "Token tidak ditemukan. Silakan login kembali."
+            Toast.makeText(requireContext(), "Token tidak ditemukan. Silakan login kembali.", Toast.LENGTH_LONG).show()
+        }
+
+        // Navigasi ke PresensiMasukFragment jika tombol presensi masuk ditekan
+        btnPresensiMasuk.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.container, PresensiMasukFragment())  // Ganti dengan PresensiMasukFragment
+                .addToBackStack(null)
+                .commit()
+        }
+
+        // Navigasi ke PresensiPulangFragment jika tombol presensi pulang ditekan
+        btnPresensiPulang.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.container, PresensiPulangFragment())  // Ganti dengan PresensiPulangFragment
+                .addToBackStack(null)
+                .commit()
         }
     }
 
-    private fun ambilLokasi() {
-        val locationProvider = LocationServices.getFusedLocationProviderClient(requireContext())
-        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
-            != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
-            return
-        }
-
-        locationProvider.lastLocation.addOnSuccessListener { location ->
-            if (location != null) {
-                currentLat = location.latitude
-                currentLng = location.longitude
-                bukaKamera()
-            } else {
-                Toast.makeText(requireContext(), "Gagal ambil lokasi", Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
-
-    private fun bukaKamera() {
-        val file = File(requireContext().cacheDir, "presensi_${System.currentTimeMillis()}.jpg")
-        file.createNewFile()
-        imageFile = file
-
-        val uri = FileProvider.getUriForFile(requireContext(), "${requireContext().packageName}.provider", file)
-        cameraLauncher.launch(uri)
-    }
-
-    private fun sendPresensiToAPI(file: File) {
-        val token = "Bearer ${getTokenFromPrefs()}"
-        val jadwalKerjaId = RequestBody.create("text/plain".toMediaTypeOrNull(), "1") // nanti dinamis
-        val lat = RequestBody.create("text/plain".toMediaTypeOrNull(), currentLat.toString())
-        val lng = RequestBody.create("text/plain".toMediaTypeOrNull(), currentLng.toString())
-        val requestImage = file.asRequestBody("image/*".toMediaTypeOrNull())
-        val foto = MultipartBody.Part.createFormData("foto", file.name, requestImage)
-
-        lifecycleScope.launch {
-            try {
-                val response = api.presensiMasuk(token, jadwalKerjaId, lat, lng, foto)
+    private fun cekWaktuPresensi() {
+        apiService.cekWaktuPresensi().enqueue(object : Callback<CekWaktuPresensiResponse> {
+            override fun onResponse(
+                call: Call<CekWaktuPresensiResponse>,
+                response: Response<CekWaktuPresensiResponse>
+            ) {
                 if (response.isSuccessful) {
-                    Toast.makeText(requireContext(), "Presensi berhasil", Toast.LENGTH_SHORT).show()
+                    val data = response.body()
+                    if (data != null) {
+                        when {
+                            data.bisaPresensiMasuk -> {
+                                btnPresensiMasuk.visibility = View.VISIBLE
+                                btnPresensiPulang.visibility = View.GONE
+                            }
+                            data.bisaPresensiPulang -> {
+                                btnPresensiMasuk.visibility = View.GONE
+                                btnPresensiPulang.visibility = View.VISIBLE
+                            }
+                            else -> {
+                                btnPresensiMasuk.visibility = View.GONE
+                                btnPresensiPulang.visibility = View.GONE
+                            }
+                        }
+                        tvMessage.text = data.message
+                    } else {
+                        tvMessage.text = "Data tidak ditemukan dari server."
+                    }
                 } else {
-                    Toast.makeText(requireContext(), "Presensi gagal: ${response.message()}", Toast.LENGTH_SHORT).show()
+                    val errorBody = response.errorBody()?.string()
+                    tvMessage.text = "Error ${response.code()}: $errorBody"
                 }
-            } catch (e: Exception) {
-                Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_SHORT).show()
             }
-        }
-    }
 
-    private fun getTokenFromPrefs(): String {
-        val prefs = requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
-        return prefs.getString("token", "") ?: ""
+            override fun onFailure(call: Call<CekWaktuPresensiResponse>, t: Throwable) {
+                tvMessage.text = "Gagal koneksi ke server: ${t.message}"
+            }
+        })
     }
 }

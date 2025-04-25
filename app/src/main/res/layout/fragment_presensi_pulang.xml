@@ -1,0 +1,38 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layoutPresensi"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <ImageView
+        android:id="@+id/imagePreview"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:scaleType="centerCrop"
+        android:layout_marginBottom="24dp"
+        android:background="@android:color/darker_gray" />
+
+    <TextView
+        android:id="@+id/txtLatitude"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Latitude: -"
+        android:layout_marginBottom="8dp"/>
+
+    <TextView
+        android:id="@+id/txtLongitude"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Longitude: -"
+        android:layout_marginBottom="16dp"/>
+
+    <Button
+        android:id="@+id/btnPresensi"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Ambil Presensi"
+        android:textAllCaps="false" />
+</LinearLayout>

@@ -1,6 +1,7 @@
 package com.example.absen.model
 
-data class LokasiRequest(
+
+data class LokasiMasuk(
     val latitude: Double,
     val longitude: Double
 )

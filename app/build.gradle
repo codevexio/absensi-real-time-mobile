@@ -55,6 +55,9 @@ dependencies {
     // Coroutines (kalau pakai ViewModel/async)
     implementation libs.kotlinx.coroutines.android
 
+    implementation 'com.github.bumptech.glide:glide:4.15.1'
+    implementation 'com.google.android.gms:play-services-location:18.0.0'
+
     implementation libs.androidx.activity.ktx
     implementation libs.androidx.core.ktx
     implementation libs.androidx.appcompat

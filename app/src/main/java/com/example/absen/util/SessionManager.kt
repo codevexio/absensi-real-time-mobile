@@ -49,4 +49,3 @@ class SessionManager(context: Context) {
         prefs.edit().clear().apply()
     }
 }
-
