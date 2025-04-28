@@ -4,41 +4,55 @@ import com.google.gson.GsonBuilder
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 
 object ApiClient {
 
     private const val BASE_URL = "https://absensi-real-time-production.up.railway.app/api/"
 
-    // Client dengan Gson yang mengizinkan parsing lenient
-    val apiService: ApiService by lazy {
-        val gson = GsonBuilder()
-            .setLenient()  // Mengaktifkan mode lenient
-            .create()
+    private val gson = GsonBuilder()
+        .setLenient()
+        .create()
 
-        Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .client(OkHttpClient.Builder().build())
-            .addConverterFactory(GsonConverterFactory.create(gson))
-            .build()
-            .create(ApiService::class.java)
+    private val loggingInterceptor = HttpLoggingInterceptor().apply {
+        level = HttpLoggingInterceptor.Level.BODY
     }
 
-    // Client dengan token (untuk request yang butuh autentikasi)
+    // Default client tanpa token
+    private val defaultClient = OkHttpClient.Builder()
+        .addInterceptor(loggingInterceptor)
+        .build()
+
+    // Retrofit tanpa token (buat login atau register biasanya)
+    private val retrofit: Retrofit = Retrofit.Builder()
+        .baseUrl(BASE_URL)
+        .client(defaultClient)
+        .addConverterFactory(GsonConverterFactory.create(gson))
+        .build()
+
+    // Public access Retrofit tanpa token
+    val apiService: ApiService by lazy {
+        retrofit.create(ApiService::class.java)
+    }
+
+    // Function buat API yang perlu token
     fun getApiServiceWithToken(token: String): ApiService {
-        val client = OkHttpClient.Builder()
+        val clientWithToken = OkHttpClient.Builder()
+            .addInterceptor(loggingInterceptor)
             .addInterceptor { chain ->
-                val request = chain.request().newBuilder()
+                val newRequest = chain.request().newBuilder()
                     .addHeader("Authorization", "Bearer $token")
                     .build()
-                chain.proceed(request)
+                chain.proceed(newRequest)
             }
             .build()
 
-        return Retrofit.Builder()
+        val retrofitWithToken = Retrofit.Builder()
             .baseUrl(BASE_URL)
-            .client(client)
-            .addConverterFactory(GsonConverterFactory.create())
+            .client(clientWithToken)
+            .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
-            .create(ApiService::class.java)
+
+        return retrofitWithToken.create(ApiService::class.java)
     }
 }

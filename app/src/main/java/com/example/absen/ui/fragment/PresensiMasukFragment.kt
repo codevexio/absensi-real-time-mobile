@@ -2,170 +2,135 @@ package com.example.absen.ui.fragment
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
-import android.content.Intent
-import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.location.Location
 import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
-import android.provider.MediaStore
-import android.text.TextUtils
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.example.absen.api.ApiClient
-import com.example.absen.api.ApiService
 import com.example.absen.databinding.FragmentPresensiMasukBinding
-import com.example.absen.model.LokasiMasuk
-import com.example.absen.model.PresensiMasukRequest
-import com.example.absen.model.PresensiMasukResponse
+import com.example.absen.util.SessionManager
 import com.google.android.gms.location.LocationServices
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
-import java.text.SimpleDateFormat
-import java.util.*
+import java.io.IOException
 
 class PresensiMasukFragment : Fragment() {
 
-    private lateinit var imgPreview: ImageView
-    private lateinit var btnAmbilGambar: Button
-    private lateinit var btnKirimPresensi: Button
-    private lateinit var txtLatitude: TextView
-    private lateinit var txtLongitude: TextView
+    private var _binding: FragmentPresensiMasukBinding? = null
+    private val binding get() = _binding!!
 
-    private var imageUri: Uri? = null
-    private var latitude: Double = 0.0
-    private var longitude: Double = 0.0
+    private lateinit var imageUri: Uri
+    private lateinit var imageFile: File
+    private val LOCATION_PERMISSION_CODE = 101
+    private var currentLatitude: Double? = null
+    private var currentLongitude: Double? = null
 
-    private val REQUEST_IMAGE_CAPTURE = 1
-    private var currentPhotoPath: String = "" // Untuk menyimpan path gambar
-
-    private lateinit var apiService: ApiService
-    private lateinit var sharedPreferences: SharedPreferences
-    private lateinit var token: String
-
-    // Cek izin lokasi
-    private val LOCATION_PERMISSION_REQUEST_CODE = 100
-
-    // Menggunakan ActivityResultContracts untuk menangani hasil foto
-    private val takePictureLauncher =
-        registerForActivityResult(ActivityResultContracts.TakePicture()) { isSuccess ->
-            if (isSuccess) {
-                Log.d("PresensiMasukFragment", "Gambar berhasil diambil!")
-                imgPreview.setImageURI(imageUri)
-            } else {
-                Log.e("PresensiMasukFragment", "Gagal mengambil gambar")
-                Toast.makeText(requireContext(), "Gagal mengambil gambar", Toast.LENGTH_SHORT).show()
-            }
+    private val cameraLauncher = registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
+        if (success) {
+            binding.imgPreview.setImageURI(imageUri)
+        } else {
+            Toast.makeText(requireContext(), "Gagal mengambil gambar", Toast.LENGTH_SHORT).show()
         }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val binding = FragmentPresensiMasukBinding.inflate(inflater, container, false)
-
-        imgPreview = binding.imgPreview
-        btnAmbilGambar = binding.btnAmbilGambar
-        btnKirimPresensi = binding.btnKirimPresensi
-        txtLatitude = binding.txtLatitude
-        txtLongitude = binding.txtLongitude
-
-        sharedPreferences = requireContext().getSharedPreferences("prefs", Context.MODE_PRIVATE)
-        token = sharedPreferences.getString("token", "") ?: ""
-
-        apiService = ApiClient.getApiServiceWithToken(token)
-
-        // Button Ambil Gambar
-        btnAmbilGambar.setOnClickListener {
-            dispatchTakePictureIntent()
-        }
-
-        // Button Kirim Presensi
-        btnKirimPresensi.setOnClickListener {
-            kirimPresensiMasuk()
-        }
-
-        // Mendapatkan lokasi otomatis
-        checkLocationPermission()
-
+    ): View {
+        _binding = FragmentPresensiMasukBinding.inflate(inflater, container, false)
         return binding.root
     }
 
-    // Fungsi untuk memeriksa izin lokasi
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        setupImageFile()
+        checkLocationPermission()
+
+        binding.btnAmbilGambar.setOnClickListener {
+            cameraLauncher.launch(imageUri)
+        }
+
+        binding.btnKirimPresensi.setOnClickListener {
+            val sessionManager = SessionManager(requireContext())
+            val token = sessionManager.getToken()
+
+            if (!imageFile.exists()) {
+                Toast.makeText(requireContext(), "Silakan ambil gambar dulu", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (currentLatitude != null && currentLongitude != null && token != null) {
+                kirimPresensi(imageFile, currentLatitude!!, currentLongitude!!, token)
+            } else {
+                Toast.makeText(requireContext(), "Lokasi atau token belum tersedia", Toast.LENGTH_SHORT).show()
+                if (token == null) Toast.makeText(requireContext(), "Token NULL", Toast.LENGTH_SHORT).show()
+                if (currentLatitude == null) Toast.makeText(requireContext(), "Latitude NULL", Toast.LENGTH_SHORT).show()
+                if (currentLongitude == null) Toast.makeText(requireContext(), "Longitude NULL", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+    }
+
+    private fun setupImageFile() {
+        val cacheDir = requireContext().cacheDir
+        imageFile = File(cacheDir, "presensi_masuk.jpg")
+        try {
+            if (!imageFile.exists()) {
+                imageFile.createNewFile()
+            }
+        } catch (e: IOException) {
+            Toast.makeText(requireContext(), "Gagal membuat file gambar", Toast.LENGTH_SHORT).show()
+        }
+
+        imageUri = FileProvider.getUriForFile(
+            requireContext(),
+            "${requireContext().packageName}.provider",
+            imageFile
+        )
+    }
+
     private fun checkLocationPermission() {
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            // Jika izin sudah diberikan, kita bisa mengakses lokasi
-            getLokasi()
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            ambilLokasiSekarang()
         } else {
-            // Jika izin belum diberikan, kita minta izin
-            ActivityCompat.requestPermissions(
-                requireActivity(),
+            requestPermissions(
                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                LOCATION_PERMISSION_REQUEST_CODE
+                LOCATION_PERMISSION_CODE
             )
         }
     }
 
-    private fun dispatchTakePictureIntent() {
-        Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
-            takePictureIntent.resolveActivity(requireActivity().packageManager)?.also {
-                val photoFile: File? = createImageFile()
-                photoFile?.also {
-                    imageUri = FileProvider.getUriForFile(
-                        requireContext(),
-                        "com.example.absen.fileprovider",
-                        it
-                    )
-                    Log.d("PresensiMasukFragment", "Photo URI: $imageUri") // Log URI foto
-                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
-                    takePictureLauncher.launch(imageUri)
-                }
-            }
-        }
-    }
-
-
-    private fun createImageFile(): File {
-        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
-        val storageDir: File = requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!
-        val imageFile = File.createTempFile(
-            "JPEG_${timeStamp}_",
-            ".jpg",
-            storageDir
-        )
-        currentPhotoPath = imageFile.absolutePath // Simpan path gambar
-        return imageFile
-    }
-
     @SuppressLint("MissingPermission")
-    private fun getLokasi() {
+    private fun ambilLokasiSekarang() {
         val fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
         fusedLocationClient.lastLocation
             .addOnSuccessListener { location: Location? ->
                 location?.let {
-                    latitude = it.latitude
-                    longitude = it.longitude
-                    txtLatitude.text = "Latitude: $latitude"
-                    txtLongitude.text = "Longitude: $longitude"
+                    currentLatitude = it.latitude
+                    currentLongitude = it.longitude
+                    binding.txtLatitude.text = "Latitude: $currentLatitude"
+                    binding.txtLongitude.text = "Longitude: $currentLongitude"
+                } ?: run {
+                    Toast.makeText(requireContext(), "Lokasi tidak tersedia", Toast.LENGTH_SHORT).show()
                 }
             }
             .addOnFailureListener {
@@ -173,48 +138,63 @@ class PresensiMasukFragment : Fragment() {
             }
     }
 
-    private fun kirimPresensiMasuk() {
-        val file = File(currentPhotoPath) // Menggunakan currentPhotoPath
-        val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
-        val imageBody = MultipartBody.Part.createFormData("imageMasuk", file.name, requestFile)
+    private fun kirimPresensi(imageFile: File, latitude: Double, longitude: Double, token: String) {
+        val requestFile = imageFile.asRequestBody("image/*".toMediaTypeOrNull())
+        val body = MultipartBody.Part.createFormData("imageMasuk", imageFile.name, requestFile)
 
-        val lokasiMasuk = LokasiMasuk(latitude, longitude)
+        val latitudeBody = latitude.toString().toRequestBody("text/plain".toMediaTypeOrNull())
+        val longitudeBody = longitude.toString().toRequestBody("text/plain".toMediaTypeOrNull())
 
-        // API membutuhkan dua parameter terpisah, yaitu imageBody dan lokasiMasuk
-        val presensiRequest = PresensiMasukRequest(imageBody, lokasiMasuk)
+        val multipartBody = MultipartBody.Builder()
+            .setType(MultipartBody.FORM)
+            .addFormDataPart("imageMasuk", imageFile.name, requestFile)
+            .addFormDataPart("lokasiMasuk[latitude]", latitude.toString())
+            .addFormDataPart("lokasiMasuk[longitude]", longitude.toString())
+            .build()
 
-        // Panggil API menggunakan coroutine
-        CoroutineScope(Dispatchers.Main).launch {
+        lifecycleScope.launch {
             try {
-                val response = apiService.presensiMasuk(imageBody, lokasiMasuk)
-                if (response.isSuccessful) {
-                    Toast.makeText(requireContext(), "Presensi berhasil", Toast.LENGTH_SHORT).show()
+                val response = ApiClient.getApiServiceWithToken(token).presensiMasuk(
+                    imageMasuk = body,
+                    latitude = latitudeBody,
+                    longitude = longitudeBody
+                )
+
+                if (response.isSuccessful && response.body() != null) {
+                    val message = response.body()!!.message
+                    Toast.makeText(requireContext(), "Sukses: $message", Toast.LENGTH_SHORT).show()
                 } else {
-                    Toast.makeText(requireContext(), "Presensi gagal", Toast.LENGTH_SHORT).show()
+                    val error = response.errorBody()?.string()
+                    Toast.makeText(requireContext(), "Gagal: $error", Toast.LENGTH_LONG).show()
                 }
             } catch (e: Exception) {
-                Toast.makeText(requireContext(), "Gagal mengirim data: ${e.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_LONG).show()
             }
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
-            imgPreview.setImageURI(imageUri)
-        }
+    private fun getTokenFromSharedPreferences(): String? {
+        val sessionManager = SessionManager(requireContext())
+        return sessionManager.getToken()
     }
 
-    // Menangani hasil permintaan izin lokasi
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+        if (requestCode == LOCATION_PERMISSION_CODE) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Jika izin diberikan, kita dapat mengakses lokasi
-                getLokasi()
+                ambilLokasiSekarang()
             } else {
                 Toast.makeText(requireContext(), "Izin lokasi ditolak", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

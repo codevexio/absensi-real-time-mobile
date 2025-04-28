@@ -5,6 +5,7 @@ import com.example.absen.model.LoginRequest
 import com.example.absen.model.LoginResponse
 import com.example.absen.model.LokasiMasuk
 import com.example.absen.model.PresensiMasukResponse
+import com.example.absen.model.PresensiPulangResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Call
@@ -27,8 +28,15 @@ interface ApiService {
     @POST("presensi/masuk")
     suspend fun presensiMasuk(
         @Part imageMasuk: MultipartBody.Part,
-        @Part("lokasiMasuk") lokasiMasuk: LokasiMasuk
+        @Part("lokasiMasuk[latitude]") latitude: RequestBody,
+        @Part("lokasiMasuk[longitude]") longitude: RequestBody
     ): Response<PresensiMasukResponse>
 
-
+    @Multipart
+    @POST("presensi/pulang")
+    suspend fun presensiPulang(
+        @Part imagePulang: MultipartBody.Part,
+        @Part("lokasiPulang[latitude]") latitude: RequestBody,
+        @Part("lokasiPulang[longitude]") longitude: RequestBody
+    ): Response<PresensiPulangResponse>
 }
