@@ -7,6 +7,6 @@ data class PresensiMasukData(
     val waktuMasuk: String,
     val statusMasuk: String,
     val imageMasuk: String,
-    val lokasiMasuk: String,
-    val jadwal_kerja_id: Int // lokasi dalam bentuk json
+    val lokasiMasuk: LokasiMasuk,
+    val jadwal_kerja_id: Int
 )

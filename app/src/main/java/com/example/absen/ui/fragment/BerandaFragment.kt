@@ -29,15 +29,6 @@ class BerandaFragment : Fragment() {
         val golongan = sessionManager.getUserGolongan() ?: "Golongan Tidak Ditemukan"
         val divisi = sessionManager.getUserDivisi() ?: "Divisi Tidak Ditemukan"
 
-        // Tampilkan data user di UI
-        val tvNama = view.findViewById<TextView>(R.id.tvNama)
-        val tvGolongan = view.findViewById<TextView>(R.id.tvGolongan)
-        val tvDivisi = view.findViewById<TextView>(R.id.tvDivisi)
-
-        tvNama.text = "Nama: $nama"
-        tvGolongan.text = "Golongan: $golongan"
-        tvDivisi.text = "Divisi: $divisi"
-
         return view
     }
 }
