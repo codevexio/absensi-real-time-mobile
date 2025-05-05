@@ -55,7 +55,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Selamat Datang"
-                    android:textSize="32sp"
+                    android:textSize="30sp"
                     android:textStyle="bold"/>
 
                 <TextView
@@ -98,12 +98,14 @@
                 <View
                     android:layout_width="wrap_content"
                     android:layout_height="10dp"/>
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnLogin"
-                    android:layout_width="match_parent"
-                    android:layout_height="60dp"
+                <Button
                     android:text="Masuk"
-                    app:cornerRadius="20dp"/>
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/green"
+                    android:textColor="@android:color/white"
+                    android:layout_marginTop="10dp"
+                    android:id="@+id/btnlogin"/>
                 <View
                     android:layout_width="wrap_content"
                     android:layout_height="10dp"/>

@@ -107,6 +107,7 @@
             </LinearLayout>
         </LinearLayout>
 
+
         <!-- Judul -->
         <TextView
             android:text="Karyawan Terlambat"
