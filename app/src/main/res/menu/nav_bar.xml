@@ -5,13 +5,13 @@
     <item
         android:id="@+id/beranda"
         android:title="Beranda"
-        android:icon="@drawable/baseline_home_filled_24"/>
+        android:icon="@drawable/home"/>
     <item
         android:id="@+id/presensi"
         android:title="Presensi"
-        android:icon="@drawable/baseline_pan_tool_24"/>
+        android:icon="@drawable/presensi"/>
     <item
         android:id="@+id/history"
-        android:title="History"
+        android:title="Riwayat"
         android:icon="@drawable/baseline_history_24"/>
 </menu>
