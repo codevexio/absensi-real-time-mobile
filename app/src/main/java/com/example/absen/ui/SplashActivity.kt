@@ -26,7 +26,7 @@ class SplashActivity : AppCompatActivity() {
 
         val etUsername = findViewById<EditText>(R.id.etUsername)
         val etPassword = findViewById<EditText>(R.id.etPassword)
-        val btnLogin = findViewById<Button>(R.id.btnLogin)
+        val btnLogin = findViewById<Button>(R.id.btnlogin)
 
         btnLogin.setOnClickListener {
             val username = etUsername.text.toString()

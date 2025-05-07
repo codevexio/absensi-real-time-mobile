@@ -5,10 +5,7 @@
     <color name="green">#14B8A6</color>
     <color name="purple">#BB6BD9</color>
     <color name="bg">#F5F5F5</color>
-<<<<<<< HEAD
     <color name="dlmbox">#F6F6F6</color>
     <color name="luarbox">#D1D1D1</color>
-=======
     <color name="bg2">#d1fae5</color>
->>>>>>> df3f121f590a8c973acc3dcde0d77bbcd33d8c0a
 </resources>

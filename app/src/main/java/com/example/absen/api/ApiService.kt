@@ -6,8 +6,11 @@ import com.example.absen.model.LoginResponse
 import com.example.absen.model.LokasiMasuk
 import com.example.absen.model.PresensiMasukResponse
 import com.example.absen.model.PresensiPulangResponse
+import com.example.absen.model.RekapPresensiResponse
+import com.example.absen.model.StatistikKehadiranResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.Body
@@ -16,6 +19,8 @@ import retrofit2.http.Header
 import retrofit2.http.Part
 import retrofit2.http.Multipart
 import retrofit2.http.POST
+import retrofit2.http.Path
+import retrofit2.http.Streaming
 
 interface ApiService {
     @POST("login")
@@ -39,4 +44,18 @@ interface ApiService {
         @Part("lokasiPulang[latitude]") latitude: RequestBody,
         @Part("lokasiPulang[longitude]") longitude: RequestBody
     ): Response<PresensiPulangResponse>
+
+    @GET("list-rekap-presensi")
+    suspend fun listRekapPresensi(): Response<RekapPresensiResponse>
+
+    @GET("rekap-presensi-pdf/{bulan}")
+    @Streaming
+    suspend fun downloadRekapPdf(
+        @Path("bulan") bulan: String
+    ): Response<ResponseBody>
+
+    @GET("keterlambatan/statistik-bulanan")
+    suspend fun getStatistikKehadiran(): Response<StatistikKehadiranResponse>
+
+
 }
