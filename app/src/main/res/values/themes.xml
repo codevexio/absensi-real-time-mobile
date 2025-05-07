@@ -6,4 +6,7 @@
     </style>
 
     <style name="Theme.Absen" parent="Base.Theme.Absen" />
+    <style name="App.Custom.Indicator" parent="ShapeAppearance.Material3.NavigationBarView.ActiveIndicator">
+        <item name="android:color">@color/white</item>
+    </style>
 </resources>

@@ -1,93 +1,103 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    >
+    android:layout_height="match_parent">
 
-    <RelativeLayout
+    <LinearLayout
+        android:orientation="vertical"
+        android:padding="16dp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
+        <ImageView
+            android:layout_width="23dp"
+            android:layout_height="28dp"
+            android:src="@drawable/back">
+
+        </ImageView>
+
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:background="@color/bg"
-            android:alpha="0.7">
+            android:text="Cuti"
+            android:fontFamily="@font/poppinssemibold"
+            android:textSize="20sp"
+            android:layout_marginTop="-30dp"
+            android:layout_gravity="center">
+        </TextView>
+        <!-- Waktu -->
 
-            <TextView
-                android:layout_width="176dp"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="10dp"
-                android:fontFamily="@font/poppinssemibold"
-                android:text="Hallo, Miftahul"
-                android:textSize="20dp" />
-        </RelativeLayout>
-
-
-        <androidx.cardview.widget.CardView
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="Tanggal Izin"
+            android:layout_marginTop="15dp">
+        </TextView>
+        <EditText
+            android:id="@+id/tanggalizin"
             android:layout_width="match_parent"
-            android:layout_height="130dp"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="520dp"
-            app:cardCornerRadius="20dp">
+            android:layout_height="35dp"
+            android:gravity="center"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/border2"
+            android:inputType="datetime" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="28dp">
+        <!-- Status Dropdown -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Tanggal Selesai"
+            android:layout_marginTop="10dp">
+        </TextView>
+        <EditText
+            android:id="@+id/tanggalselesai"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:gravity="center"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/border2"
+            android:inputType="datetime" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+        <!-- Jadwal Dropdown -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="Perihal"
+            android:layout_marginTop="10dp">
+        </TextView>
+        <EditText
+            android:id="@+id/editTextTime"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:gravity="center"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/border2"
+            android:inputType="text" />
 
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:padding="16dp">
+        <!-- Foto -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="Upload Dokumen"
+            android:layout_marginTop="10dp">
+        </TextView>
+        <ImageView
+            android:id="@+id/uploadDokumen"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginTop="10dp"
+            android:src="@drawable/uploadfile"
+            android:background="@drawable/border2"
+            android:scaleType="centerInside" />
 
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="10"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Apakah Sudah Absen?"
-                            android:textSize="20sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/statuspresensi"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Status: Belum"
-                            android:textSize="14sp" />
-                    </LinearLayout>
-
-                    <Button
-                        android:id="@+id/presensi"
-                        android:layout_width="103dp"
-                        android:layout_height="wrap_content"
-                        android:backgroundTint="@color/green"
-                        android:text="Absen"
-                        android:textColor="@android:color/white" />
-                    
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:orientation="horizontal"
-                    android:weightSum="2" />
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
-
-    </RelativeLayout>
-
-</FrameLayout>
+        <!-- Tombol Kirim -->
+        <Button
+            android:text="Kirim"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/green"
+            android:textColor="@android:color/white"
+            android:layout_marginTop="10dp"
+            android:id="@+id/kirimcuti"/>
+    </LinearLayout>
+</ScrollView>

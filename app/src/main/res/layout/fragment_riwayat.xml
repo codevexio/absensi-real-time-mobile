@@ -4,12 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-<<<<<<< HEAD
     android:background="@color/bg">
-=======
-    android:orientation="vertical"
-    android:background="@color/white">
->>>>>>> 3c8034ec18240fd0b71f66372cfd723a704011fa
 
     <SearchView
         android:id="@+id/search_riwayat"
