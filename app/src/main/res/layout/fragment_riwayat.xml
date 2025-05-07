@@ -14,11 +14,12 @@
         android:layout_gravity="center"
         android:background="@drawable/border_search" />
 
-    <ListView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/hasil_riwayat"
         android:layout_marginTop="15dp"
         android:layout_width="340dp"
         android:layout_gravity="center"
         android:layout_height="wrap_content"
-        app:flow_verticalBias="0.05"/>
+        app:flow_verticalBias="0.05"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
 </LinearLayout>

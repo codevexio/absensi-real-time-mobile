@@ -22,6 +22,7 @@ playServicesLocationVersion = "21.3.0"
 retrofit = "2.9.0"
 squareupLoggingInterceptor = "4.11.0"
 playServicesCastFramework = "22.0.0"
+common = "18.11.0"
 
 [libraries]
 androidx-activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "activityKtx" }
@@ -45,6 +46,7 @@ play-services-location = { module = "com.google.android.gms:play-services-locati
 play-services-location-v2130 = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocationVersion" }
 retrofit2-retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 play-services-cast-framework = { group = "com.google.android.gms", name = "play-services-cast-framework", version.ref = "playServicesCastFramework" }
+common = { group = "com.google.mlkit", name = "common", version.ref = "common" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
