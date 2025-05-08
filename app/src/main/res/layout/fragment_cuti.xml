@@ -1,103 +1,231 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:layout_width="match_parent">
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:padding="16dp"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/header_cuti"
+        android:layout_width="370dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp">
+
+        <ImageView
+            android:id="@+id/back"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/back"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppinsmedium"
+            android:text="Pengajuan Cuti"
+            android:textSize="18sp"
+            android:gravity="center"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:textColor="@color/black"
+            />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/keterangan"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <ImageView
-            android:layout_width="23dp"
-            android:layout_height="28dp"
-            android:src="@drawable/back">
-
-        </ImageView>
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        app:layout_constraintTop_toBottomOf="@id/header_cuti">
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="Cuti"
-            android:fontFamily="@font/poppinssemibold"
-            android:textSize="20sp"
-            android:layout_marginTop="-30dp"
-            android:layout_gravity="center">
-        </TextView>
-        <!-- Waktu -->
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="Tanggal Izin"
-            android:layout_marginTop="15dp">
-        </TextView>
-        <EditText
-            android:id="@+id/tanggalizin"
-            android:layout_width="match_parent"
-            android:layout_height="35dp"
-            android:gravity="center"
-            android:layout_marginTop="5dp"
-            android:background="@drawable/border2"
-            android:inputType="datetime" />
-
-        <!-- Status Dropdown -->
-        <TextView
-            android:layout_width="match_parent"
+            android:id="@+id/titleTahunan"
+            android:layout_width="140dp"
             android:layout_height="wrap_content"
-            android:text="Tanggal Selesai"
-            android:layout_marginTop="10dp">
-        </TextView>
-        <EditText
-            android:id="@+id/tanggalselesai"
-            android:layout_width="match_parent"
-            android:layout_height="35dp"
+            android:text="Sisa Cuti Tahunan"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
             android:gravity="center"
-            android:layout_marginTop="5dp"
-            android:background="@drawable/border2"
-            android:inputType="datetime" />
+            android:fontFamily="@font/poppinsmedium"
+            android:textSize="14sp"
+            />
 
-        <!-- Jadwal Dropdown -->
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="Perihal"
-            android:layout_marginTop="10dp">
-        </TextView>
-        <EditText
-            android:id="@+id/editTextTime"
-            android:layout_width="match_parent"
-            android:layout_height="35dp"
-            android:gravity="center"
-            android:layout_marginTop="5dp"
-            android:background="@drawable/border2"
-            android:inputType="text" />
-
-        <!-- Foto -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="Upload Dokumen"
-            android:layout_marginTop="10dp">
-        </TextView>
-        <ImageView
-            android:id="@+id/uploadDokumen"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:layout_marginTop="10dp"
-            android:src="@drawable/uploadfile"
-            android:background="@drawable/border2"
-            android:scaleType="centerInside" />
-
-        <!-- Tombol Kirim -->
-        <Button
-            android:text="Kirim"
-            android:layout_width="match_parent"
+            android:id="@+id/titlePanjang"
+            android:layout_width="140dp"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/green"
-            android:textColor="@android:color/white"
-            android:layout_marginTop="10dp"
-            android:id="@+id/kirimcuti"/>
-    </LinearLayout>
-</ScrollView>
+            android:text="Sisa Cuti Panjang"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:gravity="center"
+            android:fontFamily="@font/poppinsmedium"
+            android:textSize="14sp"/>
+
+        <TextView
+            android:id="@+id/sisaTahunan"
+            android:layout_width="140dp"
+            android:layout_height="wrap_content"
+            android:text="12 Hari"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:background="@drawable/border2"
+            app:layout_constraintTop_toBottomOf="@id/titleTahunan"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:gravity="center"
+            android:fontFamily="@font/poppinsmedium"
+            android:textSize="14sp"
+            />
+        <TextView
+            android:id="@+id/sisaPanjang"
+            android:layout_width="140dp"
+            android:layout_height="wrap_content"
+            android:text="60 Hari"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:background="@drawable/border2"
+            app:layout_constraintTop_toBottomOf="@id/titlePanjang"
+            app:layout_constraintRight_toRightOf="parent"
+            android:gravity="center"
+            android:fontFamily="@font/poppinsmedium"
+            android:textSize="14sp"
+            />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/titleTanggalMulai"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Tanggal Mulai"
+        android:textSize="14sp"
+        android:fontFamily="@font/poppinsmedium"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        app:layout_constraintTop_toBottomOf="@id/keterangan"/>
+
+    <EditText
+        android:id="@+id/tanggalMulai"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/titleTanggalMulai"
+        android:text="Tanggal Mulai"
+        android:inputType="date"
+        android:textSize="14sp"
+        android:paddingLeft="10dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:background="@drawable/border2"
+        android:fontFamily="@font/poppinsregular"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp" />
+
+    <TextView
+        android:id="@+id/titleTanggalSelesai"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Tanggal Selesai"
+        android:textSize="14sp"
+        android:fontFamily="@font/poppinsmedium"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        app:layout_constraintTop_toBottomOf="@id/tanggalMulai"/>
+
+    <EditText
+        android:id="@+id/tanggalselesai"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/titleTanggalSelesai"
+        android:text="Tanggal Selesai"
+        android:inputType="date"
+        android:textSize="14sp"
+        android:paddingLeft="10dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:background="@drawable/border2"
+        android:fontFamily="@font/poppinsregular"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp" />
+
+    <TextView
+        android:id="@+id/titleJenis"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Jenis Cuti"
+        android:textSize="14sp"
+        android:fontFamily="@font/poppinsmedium"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        app:layout_constraintTop_toBottomOf="@id/tanggalselesai"/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/jenisCuti"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        app:layout_constraintTop_toBottomOf="@id/titleJenis"
+        android:background="@drawable/border2">
+
+        <Spinner
+            android:id="@+id/pilihJenisCuti"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:paddingLeft="10dp"
+            android:gravity="center"
+            android:fontFamily="@font/poppinsregular"
+            android:textSize="14sp"
+            android:spinnerMode="dialog"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/titleDokumen"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Upload Foto"
+        android:textSize="14sp"
+        android:fontFamily="@font/poppinsmedium"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        app:layout_constraintTop_toBottomOf="@id/jenisCuti"/>
+
+    <ImageView
+        android:id="@+id/dokumen"
+        android:layout_width="370dp"
+        android:layout_height="150dp"
+        android:src="@drawable/uploadfile"
+        android:background="@drawable/border2"
+        android:scaleType="center"
+        app:layout_constraintTop_toBottomOf="@id/titleDokumen"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"/>
+
+    <Button
+        android:id="@+id/buttonCuti"
+        android:text="Kirim"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/green"
+        android:textColor="@android:color/white"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        app:layout_constraintTop_toBottomOf="@id/dokumen"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
