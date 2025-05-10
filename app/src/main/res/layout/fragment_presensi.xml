@@ -17,7 +17,7 @@
         app:cardCornerRadius="20dp"
         app:cardBackgroundColor="@color/white"
         app:cardMaxElevation="12dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="50dp"
         app:contentPadding="10dp"
         app:cardPreventCornerOverlap="true"
         app:cardUseCompatPadding="true"

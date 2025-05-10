@@ -7,6 +7,7 @@ import com.example.absen.model.LokasiMasuk
 import com.example.absen.model.PresensiMasukResponse
 import com.example.absen.model.PresensiPulangResponse
 import com.example.absen.model.RekapPresensiResponse
+import com.example.absen.model.ShiftResponse
 import com.example.absen.model.StatistikKehadiranResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -57,5 +58,10 @@ interface ApiService {
     @GET("keterlambatan/statistik-bulanan")
     suspend fun getStatistikKehadiran(): Response<StatistikKehadiranResponse>
 
+    // Pastikan bahwa kamu menggunakan token dengan benar
+    @GET("shift/hari-ini")
+    suspend fun getShiftHariIni(
+        @Header("Authorization") token: String
+    ): Response<ShiftResponse>
 
 }
