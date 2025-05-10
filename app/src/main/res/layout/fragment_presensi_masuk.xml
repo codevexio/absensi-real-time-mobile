@@ -24,18 +24,31 @@
             android:src="@drawable/back"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
+
         <TextView
+            android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/poppinsmedium"
-            android:text="Presensi Masuk"
-            android:textSize="18sp"
             android:gravity="center"
+            android:text="Presensi Masuk"
+            android:textColor="@color/black"
+            android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            android:textColor="@color/black"
-            />
+            app:layout_constraintRight_toRightOf="parent" />
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/refresh"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="@+id/back"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0">
+        </ImageView>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <fragment
@@ -53,7 +66,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@+id/maps"
-        android:text="Nama Jalan"
+        android:hint="Nama Jalan"
         android:textSize="14sp"
         android:paddingLeft="10dp"
         android:paddingTop="8dp"
@@ -81,7 +94,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@+id/titleWaktu"
-        android:text="Waktu"
+        android:hint="Waktu"
         android:textSize="14sp"
         android:paddingLeft="10dp"
         android:paddingTop="8dp"
@@ -108,7 +121,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@+id/titleShift"
-        android:text="Shift"
+        android:hint="Shift"
         android:textSize="14sp"
         android:paddingLeft="10dp"
         android:paddingTop="8dp"
@@ -130,27 +143,41 @@
         android:layout_marginRight="20dp"
         app:layout_constraintTop_toBottomOf="@id/shift"/>
 
-    <ImageView
-        android:id="@+id/foto"
+    <FrameLayout
+        android:id="@+id/frameLayout"
         android:layout_width="370dp"
-        android:layout_height="200dp"
-        android:src="@drawable/camera"
-        android:background="@drawable/border2"
-        android:scaleType="center"
-        app:layout_constraintTop_toBottomOf="@id/titleFoto"
+        android:layout_height="150dp"
+        android:layout_marginTop="10dp"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"/>
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/titleFoto">
 
+        <!-- Border tetap solid -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/border2" />
+
+        <!-- Gambar kamera dengan alpha -->
+        <ImageView
+            android:id="@+id/foto"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:alpha="0.2"
+            android:scaleType="center"
+            android:src="@drawable/camera" />
+    </FrameLayout>
     <Button
         android:id="@+id/buttonMasuk"
-        android:text="Kirim"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="381dp"
+        android:layout_height="57dp"
+        android:layout_marginBottom="16dp"
         android:backgroundTint="@color/green"
-        android:textColor="@android:color/white"
+        android:text="Kirim"
         android:layout_marginTop="10dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        app:layout_constraintTop_toBottomOf="@id/foto"/>
-
+        android:textColor="@android:color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/frameLayout" />
 </androidx.constraintlayout.widget.ConstraintLayout>
