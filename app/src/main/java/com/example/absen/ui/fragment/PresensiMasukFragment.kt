@@ -19,10 +19,13 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.lifecycleScope
 import com.example.absen.R
 import com.example.absen.api.ApiClient
+import com.example.absen.databinding.FragmentPresensiBinding
 import com.example.absen.model.PresensiMasukResponse
+import com.example.absen.ui.PresensiFragment
 import com.example.absen.util.SessionManager
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -57,6 +60,7 @@ class PresensiMasukFragment : Fragment(), OnMapReadyCallback {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var sessionManager: SessionManager
     private lateinit var googleMap: GoogleMap
+    private lateinit var back: ImageView
 
     private var latitude: Double = 0.0
     private var longitude: Double = 0.0
@@ -66,6 +70,7 @@ class PresensiMasukFragment : Fragment(), OnMapReadyCallback {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         // Menghubungkan layout XML dengan fragment ini
         return inflater.inflate(R.layout.fragment_presensi_masuk, container, false)
     }
@@ -77,6 +82,7 @@ class PresensiMasukFragment : Fragment(), OnMapReadyCallback {
         jadwalKerja = view.findViewById(R.id.shift)
         fotoImageView = view.findViewById(R.id.foto)
         buttonMasuk = view.findViewById(R.id.buttonMasuk)
+        back = view.findViewById(R.id.back)
 
         sessionManager = SessionManager(requireContext())
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
@@ -103,6 +109,13 @@ class PresensiMasukFragment : Fragment(), OnMapReadyCallback {
                 return@setOnClickListener
             }
             uploadPresensi()
+        }
+
+        back.setOnClickListener {
+            val presensiFragment = PresensiFragment()
+            val transaction: FragmentTransaction = requireFragmentManager().beginTransaction()
+            transaction.replace(R.id.container, presensiFragment)
+            transaction.commit()
         }
 
         // Inisialisasi SupportMapFragment dan panggil onMapReady
