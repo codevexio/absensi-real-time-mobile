@@ -226,7 +226,7 @@
             android:layout_height="match_parent"
             android:alpha="0.2"
             android:scaleType="center"
-            android:src="@drawable/camera" />
+            android:src="@drawable/uploadfile" />
     </FrameLayout>
     <Button
         android:id="@+id/buttonCuti"

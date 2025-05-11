@@ -21,12 +21,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="648dp"
+        android:background="@drawable/navbar_background"
         app:itemBackground="@color/green"
+        app:itemIconTint="@color/nav_item_color"
+        app:itemTextColor="@color/nav_item_color"
+        app:itemActiveIndicatorStyle="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:background="@color/white"
-        app:menu="@menu/nav_bar"
-        app:itemActiveIndicatorStyle="@color/white"/>
+        app:menu="@menu/nav_bar" />
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
