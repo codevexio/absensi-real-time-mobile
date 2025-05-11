@@ -4,10 +4,12 @@ import com.example.absen.model.CekWaktuPresensiResponse
 import com.example.absen.model.LoginRequest
 import com.example.absen.model.LoginResponse
 import com.example.absen.model.LokasiMasuk
+import com.example.absen.model.PengajuanCutiResponse
 import com.example.absen.model.PresensiMasukResponse
 import com.example.absen.model.PresensiPulangResponse
 import com.example.absen.model.RekapPresensiResponse
 import com.example.absen.model.ShiftResponse
+import com.example.absen.model.SisaCutiResponse
 import com.example.absen.model.StatistikKehadiranResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -63,5 +65,19 @@ interface ApiService {
     suspend fun getShiftHariIni(
         @Header("Authorization") token: String
     ): Response<ShiftResponse>
+
+    @GET("cuti/sisa")
+    suspend fun getSisaCuti(): SisaCutiResponse
+
+    @Multipart
+    @POST("cuti/ajukan")
+    suspend fun ajukanCuti(
+        @Part("tanggal_mulai") tanggalMulai: RequestBody,
+        @Part("tanggal_selesai") tanggalSelesai: RequestBody,
+        @Part("jenis") jenis: RequestBody,
+        @Part dokumen: MultipartBody.Part
+    ): Response<SisaCutiResponse>
+
+
 
 }
