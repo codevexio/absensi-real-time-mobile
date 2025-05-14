@@ -132,6 +132,7 @@
         app:cardBackgroundColor="@color/white"
         app:cardMaxElevation="12dp"
         app:contentPadding="10dp"
+        android:visibility="gone"
         app:cardPreventCornerOverlap="true"
         app:cardUseCompatPadding="true"
         app:layout_constraintStart_toStartOf="parent"
