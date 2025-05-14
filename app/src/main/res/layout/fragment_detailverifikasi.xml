@@ -51,51 +51,24 @@
         </ImageView>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <fragment
-        android:id="@+id/maps"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
-        android:layout_width="370dp"
-        android:layout_height="150dp"
-        android:layout_marginTop="30dp"
-        app:layout_constraintTop_toBottomOf="@id/headerPresensiMasuk"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"/>
-
-    <TextView
-        android:id="@+id/lokasiMasuk"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/maps"
-        android:hint="Nama Jalan"
-        android:textSize="14sp"
-        android:paddingLeft="10dp"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
-        android:alpha="0.5"
-        android:background="@drawable/border2"
-        android:fontFamily="@font/poppinsregular"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginTop="10dp" />
 
     <TextView
         android:id="@+id/titleWaktu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Waktu"
+        android:text="Nama Karyawan"
         android:textSize="14sp"
         android:fontFamily="@font/poppinsmedium"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="20dp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-        app:layout_constraintTop_toBottomOf="@id/lokasiMasuk"/>
+        app:layout_constraintTop_toBottomOf="@id/headerPresensiMasuk"/>
 
     <TextView
         android:id="@+id/waktuMasuk"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@+id/titleWaktu"
-        android:hint="Waktu"
         android:textSize="14sp"
         android:alpha="0.5"
         android:paddingLeft="10dp"
@@ -110,7 +83,7 @@
         android:id="@+id/titleShift"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Shift"
+        android:text="Tanggal Pengajuan"
         android:textSize="14sp"
         android:fontFamily="@font/poppinsmedium"
         android:layout_marginTop="10dp"
@@ -123,7 +96,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@+id/titleShift"
-        android:hint="Shift"
         android:alpha="0.5"
         android:textSize="14sp"
         android:paddingLeft="10dp"
@@ -135,10 +107,10 @@
         android:layout_marginRight="20dp" />
 
     <TextView
-        android:id="@+id/titleFoto"
+        android:id="@+id/cutidokumen"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Upload Foto"
+        android:text="Dokumen Cuti"
         android:textSize="14sp"
         android:fontFamily="@font/poppinsmedium"
         android:layout_marginTop="10dp"
@@ -146,30 +118,69 @@
         android:layout_marginRight="20dp"
         app:layout_constraintTop_toBottomOf="@id/shift"/>
 
-    <FrameLayout
-        android:id="@+id/frameLayout"
-        android:layout_width="370dp"
-        android:layout_height="150dp"
+    <TextView
+        android:id="@+id/dokumencuti"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/cutidokumen"
+        android:alpha="0.5"
+        android:textSize="14sp"
+        android:paddingLeft="10dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:background="@drawable/border2"
+        android:fontFamily="@font/poppinsregular"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp" />
+    <RadioGroup
+        android:id="@+id/radioGroupCuti"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         android:layout_marginTop="10dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/titleFoto">
+        app:layout_constraintTop_toBottomOf="@id/dokumencuti"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Border tetap solid -->
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/border2" />
+        <RadioButton
+            android:id="@+id/radioTahunan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Disetujui"
+            android:fontFamily="@font/poppinsregular"
+            android:textSize="14sp"
+            android:layout_marginEnd="16dp"/>
 
-        <!-- Gambar kamera dengan alpha -->
-        <ImageView
-            android:id="@+id/foto"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:alpha="0.2"
-            android:scaleType="center"
-            android:src="@drawable/camera" />
-    </FrameLayout>
+        <RadioButton
+            android:id="@+id/radioSakit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tidak Disetujui"
+            android:layout_marginLeft="110dp"
+            android:fontFamily="@font/poppinsregular"
+            android:textSize="14sp"/>
+    </RadioGroup>
+    <EditText
+        android:id="@+id/alasanTidakDisetujui"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Masukkan alasan penolakan"
+        android:background="@drawable/border2"
+        android:paddingLeft="10dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:textSize="14sp"
+        android:fontFamily="@font/poppinsregular"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        app:layout_constraintTop_toBottomOf="@id/radioGroupCuti"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+
     <Button
         android:id="@+id/buttonMasuk"
         android:layout_width="381dp"
@@ -177,10 +188,8 @@
         android:layout_marginBottom="16dp"
         android:backgroundTint="@color/green"
         android:text="Kirim"
-        android:layout_marginTop="10dp"
         android:textColor="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/frameLayout" />
+        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
