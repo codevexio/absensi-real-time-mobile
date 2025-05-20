@@ -1,10 +1,9 @@
 package com.example.absen.api
 
+import com.example.absen.model.AjukanCutiResponse
 import com.example.absen.model.CekWaktuPresensiResponse
 import com.example.absen.model.LoginRequest
 import com.example.absen.model.LoginResponse
-import com.example.absen.model.LokasiMasuk
-import com.example.absen.model.PengajuanCutiResponse
 import com.example.absen.model.PresensiMasukResponse
 import com.example.absen.model.PresensiPulangResponse
 import com.example.absen.model.RekapPresensiResponse
@@ -67,17 +66,15 @@ interface ApiService {
     ): Response<ShiftResponse>
 
     @GET("cuti/sisa")
-    suspend fun getSisaCuti(): SisaCutiResponse
+    suspend fun getSisaCuti(): Response<SisaCutiResponse>
 
     @Multipart
     @POST("cuti/ajukan")
     suspend fun ajukanCuti(
-        @Part("tanggal_mulai") tanggalMulai: RequestBody,
-        @Part("tanggal_selesai") tanggalSelesai: RequestBody,
-        @Part("jenis") jenis: RequestBody,
+        @Part("tanggalMulai") tanggalMulai: RequestBody,
+        @Part("tanggalSelesai") tanggalSelesai: RequestBody,
+        @Part("jenisCuti") jenisCuti: RequestBody,
         @Part dokumen: MultipartBody.Part
-    ): Response<SisaCutiResponse>
-
-
+    ): Response<AjukanCutiResponse>
 
 }
