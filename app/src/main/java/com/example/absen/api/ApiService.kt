@@ -2,6 +2,7 @@ package com.example.absen.api
 
 import com.example.absen.model.AjukanCutiResponse
 import com.example.absen.model.CekWaktuPresensiResponse
+import com.example.absen.model.ListPengajuanCuti
 import com.example.absen.model.LoginRequest
 import com.example.absen.model.LoginResponse
 import com.example.absen.model.PengajuanCutiData
@@ -80,5 +81,13 @@ interface ApiService {
 
     @GET("approval-cuti")
     fun getApprovalCuti(): Call<List<Any>>
+
+    @GET("approval-cuti")
+    suspend fun getPengajuanCutiForApproval(
+        @Header("Authorization") token: String
+    ): Response<List<ListPengajuanCuti>>
+
+
+
 
 }
