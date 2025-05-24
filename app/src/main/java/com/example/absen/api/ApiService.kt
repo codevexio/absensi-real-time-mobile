@@ -4,6 +4,7 @@ import com.example.absen.model.AjukanCutiResponse
 import com.example.absen.model.CekWaktuPresensiResponse
 import com.example.absen.model.LoginRequest
 import com.example.absen.model.LoginResponse
+import com.example.absen.model.PengajuanCutiData
 import com.example.absen.model.PresensiMasukResponse
 import com.example.absen.model.PresensiPulangResponse
 import com.example.absen.model.RekapPresensiResponse
@@ -76,5 +77,8 @@ interface ApiService {
         @Part("jenisCuti") jenisCuti: RequestBody,
         @Part dokumen: MultipartBody.Part
     ): Response<AjukanCutiResponse>
+
+    @GET("approval-cuti")
+    fun getApprovalCuti(): Call<List<Any>>
 
 }

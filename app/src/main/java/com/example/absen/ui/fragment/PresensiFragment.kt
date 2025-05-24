@@ -10,6 +10,8 @@ import com.example.absen.R
 import com.example.absen.api.ApiClient
 import com.example.absen.api.ApiService
 import com.example.absen.model.CekWaktuPresensiResponse
+import com.example.absen.model.PengajuanCutiData
+import com.example.absen.ui.fragment.ApproveListFragment
 import com.example.absen.ui.fragment.CutiFragment
 import com.example.absen.ui.fragment.PresensiMasukFragment
 import com.example.absen.ui.fragment.PresensiPulangFragment
@@ -23,6 +25,8 @@ class PresensiFragment : Fragment(R.layout.fragment_presensi) {
     private lateinit var btnPresensiMasuk: Button
     private lateinit var btnPresensiPulang: Button
     private lateinit var cuti: Button
+    private lateinit var approve: Button
+    private lateinit var cardPersetujuanCuti: View
     private lateinit var tvMessage: TextView
     private lateinit var sessionManager: SessionManager
     private lateinit var apiService: ApiService
@@ -35,6 +39,11 @@ class PresensiFragment : Fragment(R.layout.fragment_presensi) {
         btnPresensiPulang = view.findViewById(R.id.btn_presensi_pulang)
         cuti = view.findViewById(R.id.cuti)
         tvMessage = view.findViewById(R.id.tv_message)
+        cardPersetujuanCuti = view.findViewById(R.id.cardPersetujuanCuti)
+        approve = view.findViewById(R.id.lihatpersetujuancuti)
+
+        // Default card persetujuan cuti disembunyikan
+        cardPersetujuanCuti.visibility = View.GONE
 
         // Inisialisasi SessionManager
         sessionManager = SessionManager(requireContext())
@@ -73,6 +82,15 @@ class PresensiFragment : Fragment(R.layout.fragment_presensi) {
                 .addToBackStack(null)
                 .commit()
         }
+
+        approve.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.container, ApproveListFragment())  // Ganti dengan PresensiPulangFragment
+                .addToBackStack(null)
+                .commit()
+        }
+
+        cekApprovalCuti()
     }
 
     private fun cekWaktuPresensi() {
@@ -113,4 +131,37 @@ class PresensiFragment : Fragment(R.layout.fragment_presensi) {
             }
         })
     }
+
+    private fun cekApprovalCuti() {
+        val token = sessionManager.getToken()
+        if (token == null) {
+            Toast.makeText(requireContext(), "Token tidak ditemukan. Silakan login ulang.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val apiService = ApiClient.getApiServiceWithToken(token)
+        apiService.getApprovalCuti().enqueue(object : Callback<List<Any>> {  // Karena kamu cuma perlu cek ada/tidak, gunakan Any atau buat model kalau mau
+            override fun onResponse(call: Call<List<Any>>, response: Response<List<Any>>) {
+                if (response.isSuccessful) {
+                    val data = response.body()
+                    if (data != null && data.isNotEmpty()) {
+                        // Ada data pengajuan cuti yang harus disetujui
+                        cardPersetujuanCuti.visibility = View.VISIBLE
+                    } else {
+                        // Tidak ada data
+                        cardPersetujuanCuti.visibility = View.GONE
+                        tvMessage.text = ""
+                    }
+                } else {
+                    // Response error
+                    cardPersetujuanCuti.visibility = View.GONE
+                }
+            }
+
+            override fun onFailure(call: Call<List<Any>>, t: Throwable) {
+                cardPersetujuanCuti.visibility = View.GONE
+            }
+        })
+    }
+
 }
