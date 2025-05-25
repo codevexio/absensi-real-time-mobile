@@ -1,6 +1,7 @@
 package com.example.absen.api
 
 import com.example.absen.model.AjukanCutiResponse
+import com.example.absen.model.ApiResponse
 import com.example.absen.model.CekWaktuPresensiResponse
 import com.example.absen.model.DetailPengajuanCutiResponse
 import com.example.absen.model.ListPengajuanCuti
@@ -20,6 +21,8 @@ import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.Field
+import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Part
@@ -91,6 +94,18 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Path("id") id: Int
     ): Response<DetailPengajuanCutiResponse>
+
+    @FormUrlEncoded
+    @POST("approval-cuti/{id}/proses")
+    suspend fun postApprovalCuti(
+        @Header("Authorization") token: String,
+        @Path("id") id: Int,
+        @Field("status") status: String,
+        @Field("catatan") catatan: String?
+    ): Response<ApiResponse>
+
+
+
 
 
 
