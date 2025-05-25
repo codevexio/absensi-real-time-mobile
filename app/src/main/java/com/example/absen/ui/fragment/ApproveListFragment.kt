@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import com.example.absen.R
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.absen.adapter.PengajuanAdapter
@@ -20,7 +21,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class ApproveListFragment : Fragment() {
+class ApproveListFragment : Fragment(), PengajuanAdapter.OnItemClickListener {
 
     private var _binding: FragmentVerifikasicutiBinding? = null
     private val binding get() = _binding!!
@@ -39,12 +40,26 @@ class ApproveListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         sessionManager = SessionManager(requireContext())
-        adapter = PengajuanAdapter(requireContext(), listRekap)
+        adapter = PengajuanAdapter(requireContext(), listRekap, this)
 
         binding.hasilPengajuan.layoutManager = LinearLayoutManager(requireContext())
         binding.hasilPengajuan.adapter = adapter
 
         fetchRekapPengajuan()
+    }
+
+    override fun onDetailClick(item: ListPengajuanCuti) {
+        val bundle = Bundle().apply {
+            putInt("id", item.id) // pastikan ListPengajuanCuti punya id
+        }
+
+        val detailFragment = DetailPengajuanFragment() // pastikan ada fragment ini
+        detailFragment.arguments = bundle
+
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.container, detailFragment)
+            .addToBackStack(null)
+            .commit()
     }
 
     private fun fetchRekapPengajuan() {
@@ -57,13 +72,21 @@ class ApproveListFragment : Fragment() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val response = ApiClient.getApiServiceWithToken(token)
-                    .getPengajuanCutiForApproval("Bearer $token")
+                    .getPengajuanCuti("Bearer $token")
 
                 withContext(Dispatchers.Main) {
                     if (response.isSuccessful && response.body() != null) {
-                        listRekap.clear()
-                        listRekap.addAll(response.body()!!)  // <-- ini error sebelumnya karena response bukan List langsung
-                        adapter.notifyDataSetChanged()
+                        val pengajuanResponse = response.body()!!
+                        val listData = pengajuanResponse.data
+                        if (listData.isNotEmpty()) {
+                            listRekap.clear()
+                            listRekap.addAll(listData)
+                            adapter.notifyDataSetChanged()
+                            binding.hasilPengajuan.visibility = View.VISIBLE
+                        } else {
+                            binding.hasilPengajuan.visibility = View.GONE
+                            Toast.makeText(requireContext(), "Data kosong", Toast.LENGTH_SHORT).show()
+                        }
                     } else {
                         Toast.makeText(requireContext(), "Gagal ambil data", Toast.LENGTH_SHORT).show()
                     }
@@ -75,6 +98,7 @@ class ApproveListFragment : Fragment() {
             }
         }
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

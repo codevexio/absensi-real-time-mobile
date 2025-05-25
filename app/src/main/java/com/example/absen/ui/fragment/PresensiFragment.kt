@@ -1,11 +1,13 @@
 package com.example.absen.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.example.absen.R
 import com.example.absen.api.ApiClient
 import com.example.absen.api.ApiService
@@ -16,6 +18,7 @@ import com.example.absen.ui.fragment.CutiFragment
 import com.example.absen.ui.fragment.PresensiMasukFragment
 import com.example.absen.ui.fragment.PresensiPulangFragment
 import com.example.absen.util.SessionManager
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -139,29 +142,31 @@ class PresensiFragment : Fragment(R.layout.fragment_presensi) {
             return
         }
 
-        val apiService = ApiClient.getApiServiceWithToken(token)
-        apiService.getApprovalCuti().enqueue(object : Callback<List<Any>> {  // Karena kamu cuma perlu cek ada/tidak, gunakan Any atau buat model kalau mau
-            override fun onResponse(call: Call<List<Any>>, response: Response<List<Any>>) {
+        lifecycleScope.launch {
+            try {
+                val response = apiService.getPengajuanCuti("Bearer $token")
                 if (response.isSuccessful) {
-                    val data = response.body()
-                    if (data != null && data.isNotEmpty()) {
-                        // Ada data pengajuan cuti yang harus disetujui
+                    val body = response.body()
+                    val listCuti = body?.data ?: emptyList()
+
+                    if (listCuti.isNotEmpty()) {
+                        // Ada data, tampilkan card-nya
+                        Log.d("APPROVAL_CUTI", "Menampilkan card cuti. Jumlah pengajuan: ${listCuti.size}")
                         cardPersetujuanCuti.visibility = View.VISIBLE
                     } else {
-                        // Tidak ada data
                         cardPersetujuanCuti.visibility = View.GONE
-                        tvMessage.text = ""
                     }
                 } else {
-                    // Response error
+                    Log.e("APPROVAL_CUTI", "Gagal response: ${response.code()}")
                     cardPersetujuanCuti.visibility = View.GONE
                 }
-            }
-
-            override fun onFailure(call: Call<List<Any>>, t: Throwable) {
+            } catch (e: Exception) {
+                Log.e("APPROVAL_CUTI", "Error: ${e.message}")
                 cardPersetujuanCuti.visibility = View.GONE
             }
-        })
+        }
     }
+
+
 
 }

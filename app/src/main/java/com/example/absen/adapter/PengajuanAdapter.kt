@@ -13,13 +13,18 @@ import com.example.absen.model.ListPengajuanCuti
 
 class PengajuanAdapter(
     private val context: Context,
-    private val listRekap: List<ListPengajuanCuti>
+    private val listRekap: List<ListPengajuanCuti>,
+    private val listener: OnItemClickListener
 ) : RecyclerView.Adapter<PengajuanAdapter.ViewHolder>() {
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val nama : TextView = itemView.findViewById(R.id.namapengajuan)
         val tanggal : TextView = itemView.findViewById(R.id.tanggalpengajuan)
         val btnSelengkap: Button = itemView.findViewById(R.id.btn_selengkap)
+    }
+
+    interface OnItemClickListener {
+        fun onDetailClick(item: ListPengajuanCuti)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -29,15 +34,13 @@ class PengajuanAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = listRekap[position]
-        holder.nama.text = "Nama : ${item.karyawan.nama}"
-        holder.tanggal.text = "Tanggal Pengajuan : ${item.created_at}"
+        holder.nama.text = "Nama : ${item.nama_karyawan}"
+        holder.tanggal.text = "Tanggal Pengajuan : ${item.tanggal_pengajuan}"
 
         holder.btnSelengkap.setOnClickListener {
-
+            listener.onDetailClick(item)
         }
     }
 
-    override fun getItemCount(): Int {
-        return listRekap.size
-    }
+    override fun getItemCount(): Int = listRekap.size
 }
