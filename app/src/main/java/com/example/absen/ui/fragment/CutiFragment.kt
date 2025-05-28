@@ -8,9 +8,12 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.lifecycleScope
+import com.example.absen.R
 import com.example.absen.databinding.FragmentCutiBinding
 import com.example.absen.api.ApiClient
+import com.example.absen.ui.PresensiFragment
 import com.example.absen.util.SessionManager
 import com.example.absen.util.FileUtils
 import kotlinx.coroutines.Dispatchers
@@ -50,7 +53,9 @@ class CutiFragment : Fragment() {
         fetchSisaCuti()
 
         binding.back.setOnClickListener {
-            requireActivity().onBackPressed()
+            val fragment = PresensiFragment()
+            val transaction: FragmentTransaction = parentFragmentManager.beginTransaction()
+            transaction.replace(R.id.container, fragment).commit()
         }
 
         binding.frameLayout.setOnClickListener {

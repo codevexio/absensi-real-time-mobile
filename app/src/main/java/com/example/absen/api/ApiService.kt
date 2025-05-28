@@ -4,6 +4,7 @@ import com.example.absen.model.AjukanCutiResponse
 import com.example.absen.model.ApiResponse
 import com.example.absen.model.CekWaktuPresensiResponse
 import com.example.absen.model.DetailPengajuanCutiResponse
+import com.example.absen.model.KeterlambatanData
 import com.example.absen.model.ListPengajuanCuti
 import com.example.absen.model.ListPengajuanCutiResponse
 import com.example.absen.model.LoginRequest
@@ -65,6 +66,9 @@ interface ApiService {
 
     @GET("keterlambatan/statistik-bulanan")
     suspend fun getStatistikKehadiran(): Response<StatistikKehadiranResponse>
+
+    @GET("keterlambatan/daftar")
+    suspend fun getDaftarTerlambat(): Response<List<KeterlambatanData>>
 
     // Pastikan bahwa kamu menggunakan token dengan benar
     @GET("shift/hari-ini")

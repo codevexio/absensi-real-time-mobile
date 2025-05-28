@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.lifecycleScope
 import com.example.absen.R
 import com.example.absen.databinding.FragmentDetailverifikasiBinding
@@ -56,6 +57,12 @@ class DetailPengajuanFragment : Fragment() {
             } else if (radioTolak) {
                 showDialogAlasan()
             }
+        }
+
+        binding.back.setOnClickListener {
+            val fragment = ApproveListFragment()
+            val transaction: FragmentTransaction = parentFragmentManager.beginTransaction()
+            transaction.replace(R.id.container, fragment).commit()
         }
     }
 
