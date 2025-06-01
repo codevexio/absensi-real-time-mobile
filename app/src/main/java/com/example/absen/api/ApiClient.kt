@@ -8,8 +8,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 
 object ApiClient {
 
-    private const val BASE_URL = "https://absensi-real-time-production.up.railway.app/api/"
-
+    private const val BASE_URL = "https://ptpn5-presensi.pocari.id/api/"
     private val gson = GsonBuilder()
         .setLenient()
         .create()

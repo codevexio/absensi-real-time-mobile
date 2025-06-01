@@ -1,7 +1,7 @@
 package com.example.absen.ui
 
-import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,11 +16,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.absen.R
 import com.example.absen.adapter.KeterlambatanAdapter
 import com.example.absen.api.ApiClient
+import com.example.absen.api.ApiClient.apiService
 import com.example.absen.model.KeterlambatanData
 import com.example.absen.model.StatistikKehadiranResponse
 import com.example.absen.ui.fragment.KeterlambatanFragment
+import com.example.absen.ui.fragment.RiwayatPengajuanFragment
 import com.example.absen.util.SessionManager
 import retrofit2.HttpException
+import java.text.SimpleDateFormat
+import java.util.*
 import java.io.IOException
 import kotlinx.coroutines.launch
 
@@ -34,6 +38,8 @@ class BerandaFragment : Fragment() {
     private lateinit var jumlahKeterlambatanTextView: TextView
     private lateinit var lihatSelengkapnya : Button
     private lateinit var btnPresensi: Button
+    private lateinit var btnLihatRiwayat: Button
+    private lateinit var cardRiwayatPengajuan: View
     private lateinit var recyclerView: RecyclerView
 
     override fun onCreateView(
@@ -52,12 +58,20 @@ class BerandaFragment : Fragment() {
         jumlahKeterlambatanTextView = view.findViewById(R.id.jumlahketerlambatan)
         lihatSelengkapnya = view.findViewById(R.id.lihatselanjutnya)
         btnPresensi = view.findViewById(R.id.presensi)
+        btnLihatRiwayat = view.findViewById(R.id.button_lihat_riwayat)
+        cardRiwayatPengajuan = view.findViewById(R.id.card1)
         recyclerView = view.findViewById(R.id.listTerlambat)
 
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         adapter = KeterlambatanAdapter(requireContext(), listTerlambat)
         recyclerView.adapter = adapter
 
+        val tvTanggal = view.findViewById<TextView>(R.id.tvTanggal)
+        val calendar = Calendar.getInstance()
+        val locale = Locale("id", "ID") // Setting ke Indonesia
+        val dateFormat = SimpleDateFormat("EEEE , dd MMMM yyyy", locale)
+        val tanggalHariIni = dateFormat.format(calendar.time)
+        tvTanggal.text = tanggalHariIni
 
         // Event tombol presensi
         btnPresensi.setOnClickListener {
@@ -72,9 +86,16 @@ class BerandaFragment : Fragment() {
             transaction.replace(R.id.container, fragment).commit()
         }
 
+        btnLihatRiwayat.setOnClickListener {
+            val fragment = RiwayatPengajuanFragment()
+            val transaction: FragmentTransaction = parentFragmentManager.beginTransaction()
+            transaction.replace(R.id.container, fragment).commit()
+        }
+
         getStatistikKehadiran()
         getStatusPresensi()
         getKaryawanTerlambatHariIni()
+        cekRiwayatPengajuan()
     }
 
     private fun getStatistikKehadiran() {
@@ -104,8 +125,47 @@ class BerandaFragment : Fragment() {
     }
 
     private fun getStatusPresensi() {
-        // Jika kamu punya endpoint `cek-status-presensi`, panggil di sini.
-        statusPresensiTextView.text = "Status: Belum"
+        val token = sessionManager.getToken()
+        if (token.isNullOrEmpty()) {
+            Toast.makeText(requireContext(), "Token tidak ditemukan", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val api = ApiClient.getApiServiceWithToken(token)
+        lifecycleScope.launch {
+            try {
+                val response = api.cekStatusPresensi()
+                if (response.isSuccessful) {
+                    val data = response.body()
+                    statusPresensiTextView.text = data?.message ?: "Status tidak diketahui"
+
+                    when (data?.code) {
+                        "SUDAH_PRESENSI" -> {
+                            btnPresensi.visibility = View.GONE
+                            statusPresensiTextView.text = "Status : Sudah presensi masuk"
+                        }
+                        "CUTI" -> {
+                            btnPresensi.visibility = View.GONE
+                            statusPresensiTextView.text = "Status : Anda sedang cuti"
+                        }
+                        "BELUM_PRESENSI" -> {
+                            btnPresensi.visibility = View.VISIBLE
+                            statusPresensiTextView.text = "Status : Belum presensi masuk"
+                        }
+                        else -> {
+                            btnPresensi.visibility = View.GONE
+                            statusPresensiTextView.text = "Terjadi kesalahan"
+                        }
+                    }
+                } else {
+                    Toast.makeText(requireContext(), "Gagal memuat status presensi", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: IOException) {
+                Toast.makeText(requireContext(), "Cek koneksi internet Anda", Toast.LENGTH_SHORT).show()
+            } catch (e: HttpException) {
+                Toast.makeText(requireContext(), "Server error: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     private fun getKaryawanTerlambatHariIni() {
@@ -136,4 +196,43 @@ class BerandaFragment : Fragment() {
             }
         }
     }
+
+    private fun cekRiwayatPengajuan() {
+        val token = sessionManager.getToken()
+        if (token.isNullOrEmpty()) {
+            cardRiwayatPengajuan.visibility = View.GONE
+            Log.e("RiwayatPengajuan", "Token kosong")
+            return
+        }
+
+        val api = ApiClient.getApiServiceWithToken(token)
+        lifecycleScope.launch {
+            try {
+                val response = api.getRiwayatPengajuan()
+                if (response.isSuccessful) {
+                    val data = response.body()
+                    if (!data.isNullOrEmpty()) {
+                        cardRiwayatPengajuan.visibility = View.VISIBLE
+                    } else {
+                        cardRiwayatPengajuan.visibility = View.GONE
+                    }
+                } else {
+                    cardRiwayatPengajuan.visibility = View.GONE
+                    Log.e("RiwayatPengajuan", "Gagal load: ${response.code()} - ${response.message()}")
+                }
+            } catch (e: IOException) {
+                cardRiwayatPengajuan.visibility = View.GONE
+                Log.e("RiwayatPengajuan", "Network error: ${e.message}")
+            } catch (e: HttpException) {
+                cardRiwayatPengajuan.visibility = View.GONE
+                Log.e("RiwayatPengajuan", "HTTP error: ${e.message}")
+            } catch (e: Exception) {
+                cardRiwayatPengajuan.visibility = View.GONE
+                Log.e("RiwayatPengajuan", "Unexpected error: ${e.message}")
+            }
+        }
+    }
+
+
 }
+

@@ -7,17 +7,19 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.absen.R
 import com.example.absen.adapter.RiwayatAdapter
 import com.example.absen.api.ApiClient
 import com.example.absen.databinding.FragmentRiwayatBinding
 import com.example.absen.model.RekapPresensi
 import com.example.absen.util.SessionManager
 import kotlinx.coroutines.CoroutineScope
+import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class RiwayatFragment : Fragment() {
+class RiwayatFragment : Fragment(), RiwayatAdapter.OnItemClickListener {
 
     private var _binding: FragmentRiwayatBinding? = null
     private val binding get() = _binding!!
@@ -36,13 +38,28 @@ class RiwayatFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         sessionManager = SessionManager(requireContext())
-        adapter = RiwayatAdapter(requireContext(), listRekap)
+        adapter = RiwayatAdapter(requireContext(), listRekap, this)
 
         binding.hasilRiwayat.layoutManager = LinearLayoutManager(requireContext())
         binding.hasilRiwayat.adapter = adapter
 
         fetchRekapPresensi()
     }
+
+    override fun onDetailClick(item: RekapPresensi){
+        val bundle = Bundle().apply {
+            putString("bulan", item.bulan)  // Ganti dari putInt("id", ...) ke putString("bulan", ...)
+        }
+
+        val detailFragment = DetailRiwayatFragment()
+        detailFragment.arguments = bundle
+
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.container, detailFragment)
+            .addToBackStack(null)
+            .commit()
+    }
+
 
     private fun fetchRekapPresensi() {
         val token = sessionManager.getToken()
@@ -57,12 +74,16 @@ class RiwayatFragment : Fragment() {
                 withContext(Dispatchers.Main) {
                     if (response.isSuccessful) {
                         val data = response.body()
+                        Log.d("RiwayatFragment", "Response body: $data")
                         data?.rekap_presensi?.let {
                             listRekap.clear()
                             listRekap.addAll(it)
                             adapter.notifyDataSetChanged()
+                        } ?: run {
+                            Toast.makeText(requireContext(), "Data rekap_presensi kosong", Toast.LENGTH_SHORT).show()
                         }
                     } else {
+                        Log.e("RiwayatFragment", "Error response code: ${response.code()}")
                         Toast.makeText(requireContext(), "Gagal memuat data", Toast.LENGTH_SHORT).show()
                     }
                 }

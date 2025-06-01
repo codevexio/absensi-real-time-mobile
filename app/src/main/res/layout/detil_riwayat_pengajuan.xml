@@ -24,21 +24,35 @@
             android:layout_height="155dp">
 
             <TextView
-                android:id="@+id/ou_bulan"
+                android:id="@+id/ou_tanggal_pengajuan"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:fontFamily="@font/poppinsmedium"
-                android:text="Mei 2025"
+                android:text="Tanggal Pengajuan"
                 android:textColor="@color/black"
-                android:textSize="18sp"
+                android:textSize="12sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.128" />
 
+            <TextView
+                android:id="@+id/ou_jenis_cuti"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="16dp"
+                android:fontFamily="@font/poppinsmedium"
+                android:text="Jenis Cuti"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                app:layout_constraintTop_toBottomOf="@id/ou_tanggal_pengajuan"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintVertical_bias="0.128" />
+
             <Button
-                android:id="@+id/btn_cek"
+                android:id="@+id/btn_detail"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Cek Detail"

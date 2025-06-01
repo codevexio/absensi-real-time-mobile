@@ -1,37 +1,28 @@
 package com.example.absen.adapter
 
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
-import android.os.Environment
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
-import android.widget.Toast
-import androidx.core.content.FileProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.example.absen.R
-import com.example.absen.api.ApiClient
 import com.example.absen.model.RekapPresensi
-import com.example.absen.util.SessionManager
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.io.File
-import java.io.FileOutputStream
 
 class RiwayatAdapter(
     private val context: Context,
-    private val listRekap: List<RekapPresensi>
+    private val listRekap: List<RekapPresensi>,
+    private val listener: OnItemClickListener
 ) : RecyclerView.Adapter<RiwayatAdapter.ViewHolder>() {
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val tvBulan: TextView = itemView.findViewById(R.id.ou_bulan)
-        val btnDownload: Button = itemView.findViewById(R.id.btn_download)
+        val btnSelengkap: Button = itemView.findViewById(R.id.btn_cek)
+    }
+
+    interface OnItemClickListener {
+        fun onDetailClick(item: RekapPresensi)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -45,68 +36,8 @@ class RiwayatAdapter(
         val item = listRekap[position]
         holder.tvBulan.text = formatBulan(item.bulan)
 
-        holder.btnDownload.setOnClickListener {
-            val sessionManager = SessionManager(context)
-            val token = sessionManager.getToken()
-            if (token != null) {
-                downloadPdf(token, item.bulan)
-            } else {
-                Toast.makeText(context, "Token tidak ditemukan. Silakan login ulang.", Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
-
-    private fun downloadPdf(token: String, bulan: String) {
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val api = ApiClient.getApiServiceWithToken(token)
-                val response = api.downloadRekapPdf(bulan)
-
-                if (response.isSuccessful) {
-                    response.body()?.let { body ->
-                        val fileName = "Rekap_${bulan}.pdf"
-                        val file = File(
-                            context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS),
-                            fileName
-                        )
-
-                        body.byteStream().use { input ->
-                            FileOutputStream(file).use { output ->
-                                input.copyTo(output)
-                            }
-                        }
-
-                        withContext(Dispatchers.Main) {
-                            val uri: Uri = FileProvider.getUriForFile(
-                                context,
-                                "${context.packageName}.provider",
-                                file
-                            )
-                            val intent = Intent(Intent.ACTION_VIEW).apply {
-                                setDataAndType(uri, "application/pdf")
-                                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                            }
-
-                            try {
-                                context.startActivity(intent)
-                            } catch (e: Exception) {
-                                Toast.makeText(context, "Tidak ada aplikasi untuk membuka PDF.", Toast.LENGTH_SHORT).show()
-                            }
-
-                            Toast.makeText(context, "File berhasil diunduh: ${file.name}", Toast.LENGTH_SHORT).show()
-                        }
-                    }
-                } else {
-                    withContext(Dispatchers.Main) {
-                        Toast.makeText(context, "Gagal mengunduh file: ${response.code()}", Toast.LENGTH_SHORT).show()
-                    }
-                }
-            } catch (e: Exception) {
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(context, "Terjadi kesalahan: ${e.message}", Toast.LENGTH_SHORT).show()
-                }
-                Log.e("RiwayatAdapter", "Download error: ${e.message}")
-            }
+        holder.btnSelengkap.setOnClickListener {
+            listener.onDetailClick(item)
         }
     }
 
