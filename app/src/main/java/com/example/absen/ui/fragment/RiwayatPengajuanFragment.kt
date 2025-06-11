@@ -6,8 +6,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -22,6 +24,7 @@ import com.example.absen.databinding.FragmentVerifikasicutiBinding
 import com.example.absen.model.ListPengajuanCuti
 import com.example.absen.model.RekapPresensi
 import com.example.absen.model.RiwayatPengajuanCuti
+import com.example.absen.ui.BerandaFragment
 import com.example.absen.util.SessionManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -31,7 +34,7 @@ import kotlinx.coroutines.withContext
 class RiwayatPengajuanFragment : Fragment(), RiwayatPengajuanAdapter.OnItemClickListener{
     private var _binding: FragmentRiwayatPengajuanBinding? = null
     private val binding get() = _binding!!
-
+    private lateinit var backButton: ImageView
     private lateinit var sessionManager: SessionManager
     private lateinit var adapter: RiwayatPengajuanAdapter
     private val riwayat = mutableListOf<RiwayatPengajuanCuti>()
@@ -48,9 +51,15 @@ class RiwayatPengajuanFragment : Fragment(), RiwayatPengajuanAdapter.OnItemClick
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         sessionManager = SessionManager(requireContext())
         adapter = RiwayatPengajuanAdapter(requireContext(), riwayat, this)
+        backButton = binding.backRiwayatPengajuan
         binding.hasilRiwayatPengajuan.layoutManager = LinearLayoutManager(requireContext())
         binding.hasilRiwayatPengajuan.adapter = adapter
 
+        backButton.setOnClickListener {
+            val fragment = BerandaFragment()
+            val transaction: FragmentTransaction = parentFragmentManager.beginTransaction()
+            transaction.replace(R.id.container, fragment).commit()
+        }
         fetchRiwayatPengajuan()
     }
 

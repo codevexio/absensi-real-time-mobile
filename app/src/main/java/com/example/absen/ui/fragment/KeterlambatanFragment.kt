@@ -4,8 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -14,6 +16,8 @@ import com.example.absen.adapter.KeterlambatanAdapter
 import com.example.absen.api.ApiClient
 import com.example.absen.databinding.FragmentKeterlambatanBinding
 import com.example.absen.model.KeterlambatanData
+import com.example.absen.ui.BerandaFragment
+import com.example.absen.ui.PresensiFragment
 import com.example.absen.util.SessionManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -25,7 +29,7 @@ class KeterlambatanFragment : Fragment() {
 
     private var _binding: FragmentKeterlambatanBinding? = null
     private val binding get() = _binding!!
-
+    private lateinit var backButton: ImageView
     private lateinit var sessionManager: SessionManager
     private lateinit var adapter: KeterlambatanAdapter
     private val listTerlambat = mutableListOf<KeterlambatanData>()
@@ -43,11 +47,16 @@ class KeterlambatanFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         sessionManager = SessionManager(requireContext())
         recyclerView = view.findViewById(R.id.listKaryawanTerlambat)
-
+        backButton = view.findViewById(R.id.back_keterlambatan)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         adapter = KeterlambatanAdapter(requireContext(), listTerlambat)
         recyclerView.adapter = adapter
 
+        backButton.setOnClickListener {
+            val fragment = BerandaFragment()
+            val transaction: FragmentTransaction = parentFragmentManager.beginTransaction()
+            transaction.replace(R.id.container, fragment).commit()
+        }
         getKaryawanTerlambatHariIni()
     }
 
