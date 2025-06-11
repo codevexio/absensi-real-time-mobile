@@ -4,9 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.Toast
 import com.example.absen.R
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.absen.adapter.PengajuanAdapter
 import com.example.absen.adapter.RiwayatAdapter
@@ -15,6 +17,7 @@ import com.example.absen.databinding.FragmentRiwayatBinding
 import com.example.absen.databinding.FragmentVerifikasicutiBinding
 import com.example.absen.model.ListPengajuanCuti
 import com.example.absen.model.RekapPresensi
+import com.example.absen.ui.PresensiFragment
 import com.example.absen.util.SessionManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -25,7 +28,7 @@ class ApproveListFragment : Fragment(), PengajuanAdapter.OnItemClickListener {
 
     private var _binding: FragmentVerifikasicutiBinding? = null
     private val binding get() = _binding!!
-
+    private lateinit var buttonBack: ImageView
     private lateinit var sessionManager: SessionManager
     private lateinit var adapter: PengajuanAdapter
     private val listRekap = mutableListOf<ListPengajuanCuti>()
@@ -40,10 +43,17 @@ class ApproveListFragment : Fragment(), PengajuanAdapter.OnItemClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         sessionManager = SessionManager(requireContext())
+        buttonBack = view.findViewById(R.id.back_approval)
         adapter = PengajuanAdapter(requireContext(), listRekap, this)
 
         binding.hasilPengajuan.layoutManager = LinearLayoutManager(requireContext())
         binding.hasilPengajuan.adapter = adapter
+
+        buttonBack.setOnClickListener {
+            val fragment = PresensiFragment()
+            val transaction: FragmentTransaction = parentFragmentManager.beginTransaction()
+            transaction.replace(R.id.container, fragment).commit()
+        }
 
         fetchRekapPengajuan()
     }
