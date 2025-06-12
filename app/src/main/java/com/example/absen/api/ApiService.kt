@@ -35,12 +35,20 @@ import retrofit2.http.Path
 import retrofit2.http.Streaming
 
 interface ApiService {
+    // Login Karyawan
     @POST("login")
     fun login(@Body request: LoginRequest): Call<LoginResponse>
 
-    @GET("cek-waktu-presensi")
-    fun cekWaktuPresensi(): Call<CekWaktuPresensiResponse> // Tanpa parameter token lagi
+    // Melihat Status Presensi Untuk Hari Ini
+    @GET("presensi/status-hari-ini")
+    suspend fun cekStatusPresensi(): Response<StatusHariIni>
 
+    // Melihat Waktu Presensi
+    // cek bisaPresensiMasuk dan bisaPresensiPulang
+    @GET("cek-waktu-presensi")
+    fun cekWaktuPresensi(): Call<CekWaktuPresensiResponse>
+
+    // POST Presensi Masuk
     @Multipart
     @POST("presensi/masuk")
     suspend fun presensiMasuk(
@@ -49,6 +57,7 @@ interface ApiService {
         @Part("lokasiMasuk[longitude]") longitude: RequestBody
     ): Response<PresensiMasukResponse>
 
+    // POST Presensi Pulang
     @Multipart
     @POST("presensi/pulang")
     suspend fun presensiPulang(
@@ -57,46 +66,52 @@ interface ApiService {
         @Part("lokasiPulang[longitude]") longitude: RequestBody
     ): Response<PresensiPulangResponse>
 
-    @GET("presensi/status-hari-ini")
-    suspend fun cekStatusPresensi(): Response<StatusHariIni>
-
+    // Menampilkan Riwayat Presensi Berdasarkan Bulannya
     @GET("list-rekap-presensi")
     suspend fun listRekapPresensi(): Response<RekapPresensiResponse>
 
+    // Menampilkan Detail Riwayat Presensi yang Dipilih
     @GET("detail-rekap/{bulan}")
     suspend fun getDetailPresensi(
         @Path("bulan") bulan: String
     ): Response<DetailPresensiResponse>
 
+    // Download PDF Detail Riwayat Presensi yang Dipilih
     @GET("rekap-presensi-pdf/{bulan}")
     @Streaming
     suspend fun downloadRekapPdf(
         @Path("bulan") bulan: String
     ): Response<ResponseBody>
 
+    // Menampilkan Riwayat Pengajuan Cuti Karyawan
     @GET("cuti/riwayat")
     suspend fun getRiwayatPengajuan(): Response<List<RiwayatPengajuanCuti>>
 
+    // Menampilkan Detail Riwayat Pengajuan Cuti Karyawan yang Dipilih
     @GET("cuti/riwayat/{id}")
     suspend fun getDetailRiwayat(
         @Path("id") id: Int
     ): Response<RiwayatDetailResponse>
 
+    // Menampilkan Statistik Kehadiran Karyawan Berdasarkan Bulan Saat Ini
     @GET("keterlambatan/statistik-bulanan")
     suspend fun getStatistikKehadiran(): Response<StatistikKehadiranResponse>
 
+    // Menampilkan Karyawan Terlambat Hari Ini
     @GET("keterlambatan/daftar")
     suspend fun getDaftarTerlambat(): Response<List<KeterlambatanData>>
 
-    // Pastikan bahwa kamu menggunakan token dengan benar
+    // Menampilkan Shift Karyawan Berdasarkan Hari Ini
     @GET("shift/hari-ini")
     suspend fun getShiftHariIni(
         @Header("Authorization") token: String
     ): Response<ShiftResponse>
 
+    // Menampilkan Sisa Cuti Karyawan
     @GET("cuti/sisa")
     suspend fun getSisaCuti(): Response<SisaCutiResponse>
 
+    // POST Pengajuan Cuti Karyawan
     @Multipart
     @POST("cuti/ajukan")
     suspend fun ajukanCuti(
@@ -106,17 +121,20 @@ interface ApiService {
         @Part dokumen: MultipartBody.Part
     ): Response<AjukanCutiResponse>
 
+    // Menampilkan Pengajuan-Pengajuan Cuti yang Membutuhkan Approval Karyawan Login
     @GET("approval-cuti")
     suspend fun getPengajuanCuti(
         @Header("Authorization") token: String
     ): Response<ListPengajuanCutiResponse>
 
+    // Menampilkan Detail Pengajuan-Pengajuan Cuti yang Membutuhkan Approval Karyawan Login
     @GET("approval-cuti/{id}")
     suspend fun getDetailPengajuanCuti(
         @Header("Authorization") token: String,
         @Path("id") id: Int
     ): Response<DetailPengajuanCutiResponse>
 
+    // POST Approve or Reject Pengajuan Cuti
     @FormUrlEncoded
     @POST("approval-cuti/{id}/proses")
     suspend fun postApprovalCuti(
