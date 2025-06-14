@@ -20,6 +20,7 @@
             android:id="@+id/back_keterlambatan"
             android:layout_width="30dp"
             android:layout_height="30dp"
+            android:layout_marginStart="28dp"
             android:src="@drawable/back"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -41,6 +42,8 @@
             android:id="@+id/refresh"
             android:layout_width="30dp"
             android:layout_height="30dp"
+            android:layout_marginEnd="24dp"
+            android:padding="0dp"
             android:src="@drawable/refresh"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

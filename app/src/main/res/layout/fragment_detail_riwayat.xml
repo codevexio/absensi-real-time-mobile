@@ -3,14 +3,27 @@
     android:id="@+id/detailScrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="#FFFFFF">
 
     <LinearLayout
         android:id="@+id/layoutRoot"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp">
 
+        <!-- Tombol Kembali -->
+        <ImageView
+            android:id="@+id/back_keterlambatan"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="16dp"
+            android:src="@drawable/back"
+            android:contentDescription="Back" />
+
+        <!-- Judul -->
         <TextView
             android:id="@+id/tvTitleDetail"
             android:layout_width="wrap_content"
@@ -18,10 +31,11 @@
             android:text="Rincian Presensi Bulanan"
             android:textSize="18sp"
             android:textStyle="bold"
+            android:layout_marginTop="-30dp"
             android:layout_gravity="center"
             android:paddingBottom="16dp" />
 
-        <!-- Horizontal scroll agar tabel bisa digeser jika terlalu lebar -->
+        <!-- Horizontal ScrollView untuk tabel -->
         <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -32,54 +46,126 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:stretchColumns="*"
-                android:shrinkColumns="*">
+                android:shrinkColumns="*"
+                android:background="#E0E0E0">
 
-                <!-- Header Tabel -->
-                <TableRow>
+                <!-- Header -->
+                <TableRow
+                    android:background="#BDBDBD"
+                    android:padding="4dp">
+
                     <TextView
                         android:text="Tgl"
                         android:textSize="12sp"
-                        android:maxLines="2"
                         android:gravity="center"
-                        style="@style/TableHeader" />
+                        android:padding="6dp"
+                        android:minWidth="130dp"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:background="#F5F5F5"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:text="Masuk"
                         android:textSize="12sp"
-                        android:maxLines="2"
                         android:gravity="center"
-                        style="@style/TableHeader" />
+                        android:padding="6dp"
+                        android:minWidth="110dp"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:background="#F5F5F5"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:text="St. Masuk"
                         android:textSize="12sp"
-                        android:maxLines="2"
                         android:gravity="center"
-                        style="@style/TableHeader" />
+                        android:padding="6dp"
+                        android:minWidth="140dp"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:background="#F5F5F5"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:text="Pulang"
                         android:textSize="12sp"
-                        android:maxLines="2"
                         android:gravity="center"
-                        style="@style/TableHeader" />
+                        android:padding="6dp"
+                        android:minWidth="120dp"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:background="#F5F5F5"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:text="St. Pulang"
                         android:textSize="12sp"
-                        android:maxLines="2"
                         android:gravity="center"
-                        style="@style/TableHeader" />
+                        android:padding="6dp"
+                        android:minWidth="140dp"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:background="#F5F5F5"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:text="Shift"
                         android:textSize="12sp"
-                        android:maxLines="2"
                         android:gravity="center"
-                        style="@style/TableHeader" />
+                        android:padding="6dp"
+                        android:minWidth="100dp"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:background="#F5F5F5"
+                        android:textStyle="bold" />
                 </TableRow>
 
-                <!-- Data baris akan ditambahkan dari Kotlin -->
+                <!-- Contoh Data -->
+                <TableRow android:padding="4dp">
+                    <TextView
+                        android:text="Senin, 9 Juni 2025"
+                        android:textSize="12sp"
+                        android:padding="6dp"
+                        android:minWidth="130dp"
+                        android:maxLines="2" />
+
+                    <TextView
+                        android:text="-"
+                        android:textSize="12sp"
+                        android:gravity="center"
+                        android:minWidth="110dp"
+                        android:padding="6dp" />
+
+                    <TextView
+                        android:text="Tidak Presensi Masuk"
+                        android:textSize="12sp"
+                        android:minWidth="140dp"
+                        android:padding="6dp"
+                        android:maxLines="2" />
+
+                    <TextView
+                        android:text="-"
+                        android:textSize="12sp"
+                        android:gravity="center"
+                        android:minWidth="120dp"
+                        android:padding="6dp" />
+
+                    <TextView
+                        android:text="Tidak Presensi Pulang"
+                        android:textSize="12sp"
+                        android:minWidth="140dp"
+                        android:padding="6dp"
+                        android:maxLines="2" />
+
+                    <TextView
+                        android:text="Regular"
+                        android:textSize="12sp"
+                        android:gravity="center"
+                        android:minWidth="100dp"
+                        android:padding="6dp"
+                        android:maxLines="2" />
+                </TableRow>
 
             </TableLayout>
         </HorizontalScrollView>
