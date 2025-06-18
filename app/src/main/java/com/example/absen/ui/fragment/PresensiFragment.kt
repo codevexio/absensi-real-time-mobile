@@ -136,37 +136,36 @@ class PresensiFragment : Fragment(R.layout.fragment_presensi) {
     }
 
     private fun cekApprovalCuti() {
-        val token = sessionManager.getToken()
-        if (token == null) {
+        if (sessionManager.getToken().isNullOrBlank()) {
+            Log.e("APPROVAL_CUTI", "Token null atau kosong.")
             Toast.makeText(requireContext(), "Token tidak ditemukan. Silakan login ulang.", Toast.LENGTH_SHORT).show()
             return
         }
 
         lifecycleScope.launch {
-            try {
-                val response = apiService.getPengajuanCuti("Bearer $token")
-                if (response.isSuccessful) {
-                    val body = response.body()
-                    val listCuti = body?.data ?: emptyList()
+            runCatching {
+                val response = apiService.getPengajuanCuti()
 
+                if (response.isSuccessful) {
+                    val listCuti = response.body()?.data.orEmpty()
                     if (listCuti.isNotEmpty()) {
-                        // Ada data, tampilkan card-nya
-                        Log.d("APPROVAL_CUTI", "Menampilkan card cuti. Jumlah pengajuan: ${listCuti.size}")
+                        Log.d("APPROVAL_CUTI", "Ada ${listCuti.size} pengajuan cuti yang perlu disetujui.")
                         cardPersetujuanCuti.visibility = View.VISIBLE
                     } else {
+                        Log.d("APPROVAL_CUTI", "Tidak ada pengajuan cuti yang perlu disetujui.")
                         cardPersetujuanCuti.visibility = View.GONE
                     }
                 } else {
-                    Log.e("APPROVAL_CUTI", "Gagal response: ${response.code()}")
+                    val errorBody = response.errorBody()?.string()
+                    Log.e("APPROVAL_CUTI", "Gagal response ${response.code()}: $errorBody")
+                    Toast.makeText(requireContext(), "Gagal mengambil data cuti (Code ${response.code()})", Toast.LENGTH_SHORT).show()
                     cardPersetujuanCuti.visibility = View.GONE
                 }
-            } catch (e: Exception) {
-                Log.e("APPROVAL_CUTI", "Error: ${e.message}")
+            }.onFailure { e ->
+                Log.e("APPROVAL_CUTI", "Terjadi exception: ${e.message}")
+                Toast.makeText(requireContext(), "Kesalahan: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
                 cardPersetujuanCuti.visibility = View.GONE
             }
         }
     }
-
-
-
 }

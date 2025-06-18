@@ -103,9 +103,7 @@ interface ApiService {
 
     // Menampilkan Shift Karyawan Berdasarkan Hari Ini
     @GET("shift/hari-ini")
-    suspend fun getShiftHariIni(
-        @Header("Authorization") token: String
-    ): Response<ShiftResponse>
+    suspend fun getShiftHariIni(): Response<ShiftResponse>
 
     // Menampilkan Sisa Cuti Karyawan
     @GET("cuti/sisa")
@@ -123,14 +121,11 @@ interface ApiService {
 
     // Menampilkan Pengajuan-Pengajuan Cuti yang Membutuhkan Approval Karyawan Login
     @GET("approval-cuti")
-    suspend fun getPengajuanCuti(
-        @Header("Authorization") token: String
-    ): Response<ListPengajuanCutiResponse>
+    suspend fun getPengajuanCuti(): Response<ListPengajuanCutiResponse>
 
     // Menampilkan Detail Pengajuan-Pengajuan Cuti yang Membutuhkan Approval Karyawan Login
     @GET("approval-cuti/{id}")
     suspend fun getDetailPengajuanCuti(
-        @Header("Authorization") token: String,
         @Path("id") id: Int
     ): Response<DetailPengajuanCutiResponse>
 
@@ -138,7 +133,6 @@ interface ApiService {
     @FormUrlEncoded
     @POST("approval-cuti/{id}/proses")
     suspend fun postApprovalCuti(
-        @Header("Authorization") token: String,
         @Path("id") id: Int,
         @Field("status") status: String,
         @Field("catatan") catatan: String?

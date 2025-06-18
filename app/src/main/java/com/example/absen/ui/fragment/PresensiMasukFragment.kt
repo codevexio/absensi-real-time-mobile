@@ -176,7 +176,7 @@ class PresensiMasukFragment : Fragment(), OnMapReadyCallback {
         lifecycleScope.launch {
             try {
                 val response = withContext(Dispatchers.IO) {
-                    api.getShiftHariIni("Bearer $token")
+                    api.getShiftHariIni()
                 }
                 if (response.isSuccessful && response.body() != null) {
                     jadwalKerja.text = response.body()?.shift?.nama ?: "Shift tidak ditemukan"

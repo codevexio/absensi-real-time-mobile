@@ -77,7 +77,7 @@ class DetailPengajuanFragment : Fragment() {
         lifecycleScope.launch(Dispatchers.IO) {
             try {
                 val response = ApiClient.getApiServiceWithToken(token)
-                    .getDetailPengajuanCuti("Bearer $token", cutiId)
+                    .getDetailPengajuanCuti(cutiId)
 
                 withContext(Dispatchers.Main) {
                     if (response.isSuccessful && response.body() != null) {
@@ -156,7 +156,7 @@ class DetailPengajuanFragment : Fragment() {
             try {
                 val status = if (setuju) "Disetujui" else "Ditolak"
                 val response = ApiClient.getApiServiceWithToken(token)
-                    .postApprovalCuti("Bearer $token", cutiId, status, alasan)
+                    .postApprovalCuti(cutiId, status, alasan)
 
                 withContext(Dispatchers.Main) {
                     if (response.isSuccessful) {

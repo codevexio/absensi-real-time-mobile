@@ -82,7 +82,7 @@ class ApproveListFragment : Fragment(), PengajuanAdapter.OnItemClickListener {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val response = ApiClient.getApiServiceWithToken(token)
-                    .getPengajuanCuti("Bearer $token")
+                    .getPengajuanCuti()
 
                 withContext(Dispatchers.Main) {
                     if (response.isSuccessful && response.body() != null) {
