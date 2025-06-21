@@ -17,6 +17,7 @@ import com.example.absen.R
 import com.example.absen.databinding.FragmentDetailverifikasiBinding
 import com.example.absen.api.ApiClient
 import com.example.absen.model.DetailPengajuanCutiResponse
+import com.example.absen.ui.PresensiFragment
 import com.example.absen.util.SessionManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -161,7 +162,16 @@ class DetailPengajuanFragment : Fragment() {
                 withContext(Dispatchers.Main) {
                     if (response.isSuccessful) {
                         Toast.makeText(requireContext(), "Berhasil mengirim persetujuan", Toast.LENGTH_SHORT).show()
-                        requireActivity().onBackPressedDispatcher.onBackPressed()
+                         
+                        // Redirect ke PresensiFragment
+                        val fragment = PresensiFragment()
+                        val transaction: FragmentTransaction = parentFragmentManager.beginTransaction()
+                        transaction.setCustomAnimations(
+                            android.R.anim.fade_in,
+                            android.R.anim.fade_out
+                        )
+
+                        transaction.replace(R.id.container, fragment).commit()
                     } else {
                         Toast.makeText(requireContext(), "Gagal mengirim persetujuan", Toast.LENGTH_SHORT).show()
                     }

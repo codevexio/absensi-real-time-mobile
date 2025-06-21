@@ -174,6 +174,17 @@ class CutiFragment : Fragment() {
                 if (response.isSuccessful) {
                     Toast.makeText(requireContext(), "Cuti berhasil diajukan", Toast.LENGTH_SHORT).show()
                     fetchSisaCuti()
+
+                    // Redirect ke PresensiFragment
+                    val fragment = PresensiFragment()
+                    val transaction: FragmentTransaction = parentFragmentManager.beginTransaction()
+                    transaction.setCustomAnimations(
+                        android.R.anim.fade_in,
+                        android.R.anim.fade_out
+                    )
+
+                    transaction.replace(R.id.container, fragment).commit()
+
                 } else {
                     val errorBody = response.errorBody()?.string()
                     Toast.makeText(requireContext(), "Gagal: $errorBody", Toast.LENGTH_LONG).show()

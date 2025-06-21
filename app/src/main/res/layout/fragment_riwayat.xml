@@ -7,13 +7,16 @@
     android:layout_height="match_parent"
     android:background="@color/white">
 
-    <androidx.appcompat.widget.SearchView
-        android:id="@+id/search_riwayat"
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginTop="52dp"
-        android:layout_width="340dp"
-        android:layout_height="50dp"
         android:layout_gravity="center"
-        android:background="@drawable/border_search" />
+        android:text="Riwayat Presensi"
+        android:textSize="18sp"
+        android:textColor="@color/black"
+        android:fontFamily="@font/poppinsmedium"
+        />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/hasil_riwayat"

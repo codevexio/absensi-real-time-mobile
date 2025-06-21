@@ -5,21 +5,25 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TableLayout
 import android.widget.TableRow
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.lifecycleScope
+import com.example.absen.R
 import com.example.absen.api.ApiClient
 import com.example.absen.databinding.FragmentDetailRiwayatPengajuanBinding
+import com.example.absen.ui.BerandaFragment
 import com.example.absen.util.SessionManager
 import kotlinx.coroutines.launch
 
 class DetailRiwayatPengajuanCutiFragment : Fragment() {
     private var _binding: FragmentDetailRiwayatPengajuanBinding? = null
     private val binding get() = _binding!!
-
+    private lateinit var backButton: ImageView
     private lateinit var sessionManager: SessionManager
     private var cutiId: Int = -1
     private lateinit var tableLayout: TableLayout
@@ -35,11 +39,17 @@ class DetailRiwayatPengajuanCutiFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         sessionManager = SessionManager(requireContext())
         cutiId = arguments?.getInt("id") ?: -1
-
+        backButton = binding.backKeterlambatan
         tableLayout = binding.tablePresensi
 
         if (cutiId != -1) {
             getDetailCuti(cutiId)
+        }
+
+        backButton.setOnClickListener {
+            val fragment = RiwayatPengajuanFragment()
+            val transaction: FragmentTransaction = parentFragmentManager.beginTransaction()
+            transaction.replace(R.id.container, fragment).commit()
         }
     }
 

@@ -13,6 +13,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Environment
+import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import okhttp3.ResponseBody
@@ -20,6 +21,8 @@ import java.io.*
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
+import com.example.absen.R
 import com.example.absen.api.ApiClient
 import com.example.absen.databinding.FragmentDetailRiwayatBinding
 import com.example.absen.model.DetailPresensi
@@ -34,6 +37,7 @@ class DetailRiwayatFragment : Fragment() {
     private var bulan: String? = null
     private lateinit var sessionManager: SessionManager
     private lateinit var binding: FragmentDetailRiwayatBinding
+    private lateinit var backButton: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,7 +56,7 @@ class DetailRiwayatFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         sessionManager = SessionManager(requireContext())
         fetchDetailPresensi()
-
+        backButton = binding.backKeterlambatan
         binding.btnDownloadPdf.setOnClickListener {
             val token = sessionManager.getToken()
             if (token != null && bulan != null) {
@@ -61,6 +65,13 @@ class DetailRiwayatFragment : Fragment() {
                 Toast.makeText(requireContext(), "Token atau bulan tidak tersedia", Toast.LENGTH_SHORT).show()
             }
         }
+
+        backButton.setOnClickListener {
+            val fragment = RiwayatFragment()
+            val transaction: FragmentTransaction = parentFragmentManager.beginTransaction()
+            transaction.replace(R.id.container, fragment).commit()
+        }
+
     }
 
     private fun fetchDetailPresensi() {

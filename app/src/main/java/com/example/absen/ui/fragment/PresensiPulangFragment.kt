@@ -234,9 +234,16 @@ class PresensiPulangFragment : Fragment(), OnMapReadyCallback {
                 }
                 if (response.isSuccessful) {
                     Toast.makeText(requireContext(), "Presensi berhasil", Toast.LENGTH_SHORT).show()
-                    parentFragmentManager.beginTransaction()
-                        .replace(R.id.container, PresensiFragment())
-                        .commit()
+
+                    // Redirect ke PresensiFragment
+                    val fragment = PresensiFragment()
+                    val transaction: FragmentTransaction = parentFragmentManager.beginTransaction()
+                    transaction.setCustomAnimations(
+                        android.R.anim.fade_in,
+                        android.R.anim.fade_out
+                    )
+
+                    transaction.replace(R.id.container, fragment).commit()
                 } else {
                     Toast.makeText(requireContext(), "Gagal presensi", Toast.LENGTH_SHORT).show()
                 }
