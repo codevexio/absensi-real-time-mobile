@@ -50,6 +50,7 @@ class SplashActivity : AppCompatActivity() {
                                 sessionManager.saveUser(
                                     login.karyawan.id,
                                     login.karyawan.nama,
+                                    login.karyawan.username,
                                     login.karyawan.golongan,
                                     login.karyawan.divisi
                                 )

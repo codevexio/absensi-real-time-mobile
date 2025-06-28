@@ -1,5 +1,6 @@
 package com.example.absen.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -38,6 +39,8 @@ class BerandaFragment : Fragment() {
     private lateinit var jumlahKeterlambatanTextView: TextView
     private lateinit var lihatSelengkapnya : Button
     private lateinit var btnPresensi: Button
+    private lateinit var tvWelcome: TextView
+    private lateinit var btnLogout: Button
     private lateinit var btnLihatRiwayat: Button
     private lateinit var cardRiwayatPengajuan: View
     private lateinit var recyclerView: RecyclerView
@@ -61,10 +64,15 @@ class BerandaFragment : Fragment() {
         btnLihatRiwayat = view.findViewById(R.id.button_lihat_riwayat)
         cardRiwayatPengajuan = view.findViewById(R.id.card1)
         recyclerView = view.findViewById(R.id.listTerlambat)
+        btnLogout = view.findViewById(R.id.logout)
 
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         adapter = KeterlambatanAdapter(requireContext(), listTerlambat)
         recyclerView.adapter = adapter
+
+        tvWelcome = view.findViewById(R.id.tvWelcome)
+        val namaUser = sessionManager.getUsername()
+        tvWelcome.text = "Selamat Datang $namaUser"
 
         val tvTanggal = view.findViewById<TextView>(R.id.tvTanggal)
         val calendar = Calendar.getInstance()
@@ -91,6 +99,16 @@ class BerandaFragment : Fragment() {
             val transaction: FragmentTransaction = parentFragmentManager.beginTransaction()
             transaction.replace(R.id.container, fragment).commit()
         }
+
+        btnLogout.setOnClickListener {
+            sessionManager.clear()
+            Toast.makeText(requireContext(), "Berhasil logout", Toast.LENGTH_SHORT).show()
+
+            val intent = Intent(requireContext(), SplashActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+        }
+
 
         getStatistikKehadiran()
         getStatusPresensi()

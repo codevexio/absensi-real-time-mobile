@@ -16,10 +16,11 @@ class SessionManager(context: Context) {
         return prefs.getString("TOKEN", null)
     }
 
-    fun saveUser(id: Int, nama: String, golongan: String, divisi: String) {
+    fun saveUser(id: Int, nama: String, username: String, golongan: String, divisi: String) {
         prefs.edit()
             .putInt("USER_ID", id)
             .putString("USER_NAMA", nama)
+            .putString("USERNAME", username)
             .putString("USER_GOLONGAN", golongan)
             .putString("USER_DIVISI", divisi)
             .apply()
@@ -35,6 +36,10 @@ class SessionManager(context: Context) {
 
     fun getUserNama(): String? {
         return prefs.getString("USER_NAMA", null)
+    }
+
+    fun getUsername(): String? {
+        return prefs.getString("USERNAME", null)
     }
 
     fun getUserGolongan(): String? {

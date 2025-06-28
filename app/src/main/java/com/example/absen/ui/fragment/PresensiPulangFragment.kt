@@ -49,6 +49,7 @@ class PresensiPulangFragment : Fragment(), OnMapReadyCallback {
     private lateinit var waktuPulang: TextView
     private lateinit var jadwalKerja: TextView
     private lateinit var fotoImageView: ImageView
+    private lateinit var refresh: ImageView
     private lateinit var buttonPulang: Button
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var sessionManager: SessionManager
@@ -70,6 +71,7 @@ class PresensiPulangFragment : Fragment(), OnMapReadyCallback {
         fotoImageView = view.findViewById(R.id.foto)
         buttonPulang = view.findViewById(R.id.buttonPulang)
         back = view.findViewById(R.id.back)
+        refresh = view.findViewById(R.id.refresh_pulang)
 
         sessionManager = SessionManager(requireContext())
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
@@ -93,6 +95,12 @@ class PresensiPulangFragment : Fragment(), OnMapReadyCallback {
         }
 
         back.setOnClickListener {
+            val fragment = PresensiPulangFragment()
+            val transaction: FragmentTransaction = parentFragmentManager.beginTransaction()
+            transaction.replace(R.id.container, fragment).commit()
+        }
+
+        refresh.setOnClickListener {
             val fragment = PresensiFragment()
             val transaction: FragmentTransaction = parentFragmentManager.beginTransaction()
             transaction.replace(R.id.container, fragment).commit()
