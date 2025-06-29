@@ -8,6 +8,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import com.example.absen.R
 import com.example.absen.databinding.ActivityMainBinding
+import com.example.absen.ui.fragment.PresensiMasukFragment
 import com.example.absen.ui.fragment.RiwayatFragment
 
 class MainActivity : AppCompatActivity() {

@@ -95,13 +95,13 @@ class PresensiPulangFragment : Fragment(), OnMapReadyCallback {
         }
 
         back.setOnClickListener {
-            val fragment = PresensiPulangFragment()
+            val fragment = PresensiFragment()
             val transaction: FragmentTransaction = parentFragmentManager.beginTransaction()
             transaction.replace(R.id.container, fragment).commit()
         }
 
         refresh.setOnClickListener {
-            val fragment = PresensiFragment()
+            val fragment = PresensiPulangFragment()
             val transaction: FragmentTransaction = parentFragmentManager.beginTransaction()
             transaction.replace(R.id.container, fragment).commit()
         }
